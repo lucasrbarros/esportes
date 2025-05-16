@@ -92,23 +92,45 @@
                             </div>
                         </div>
                         
-                        <div class="mb-4">
-                            <div class="form-group">
-                                <label for="{{ form.location.id }}" class="form-label">
-                                    <i class="bi bi-geo-alt me-2"></i>{{ form.location.label.text }}
-                                </label>
-                                <div class="input-group">
-                                    {{ form.location(class="form-control form-control-lg", placeholder="Ex: Quadra Poliesportiva, Rua das Flores, 123") }}
-                                    <span class="input-group-text"><i class="bi bi-pin-map"></i></span>
-                                </div>
-                                <div class="form-text">Onde a partida será realizada</div>
-                                {% if form.location.errors %}
-                                    <div class="text-danger">
-                                        {% for error in form.location.errors %}
-                                            <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
-                                        {% endfor %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="{{ form.city.id }}" class="form-label">
+                                        <i class="bi bi-building me-2"></i>{{ form.city.label.text }}
+                                    </label>
+                                    <div class="position-relative">
+                                        {{ form.city(class="form-control form-control-lg", placeholder="Ex: São Paulo - SP", id="city-input", autocomplete="off") }}
+                                        <div id="city-suggestions" class="city-autocomplete"></div>
                                     </div>
-                                {% endif %}
+                                    <div class="form-text">Cidade onde o evento será realizado</div>
+                                    {% if form.city.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.city.errors %}
+                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="{{ form.location.id }}" class="form-label">
+                                        <i class="bi bi-geo-alt me-2"></i>{{ form.location.label.text }}
+                                    </label>
+                                    <div class="input-group">
+                                        {{ form.location(class="form-control form-control-lg", placeholder="Ex: Quadra Poliesportiva, Rua das Flores, 123") }}
+                                        <span class="input-group-text"><i class="bi bi-pin-map"></i></span>
+                                    </div>
+                                    <div class="form-text">Endereço específico do local</div>
+                                    {% if form.location.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.location.errors %}
+                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                         
@@ -204,6 +226,90 @@
                 const laterMinutes = oneHourLater.getMinutes().toString().padStart(2, '0');
                 
                 dateInput.value = `${year}-${month}-${day}T${laterHours}:${laterMinutes}`;
+            }
+        }
+        
+        // Autocompletar para cidades
+        const cityInput = document.getElementById('city-input');
+        const suggestionsContainer = document.getElementById('city-suggestions');
+        
+        if (cityInput) {
+            let typingTimer;
+            const doneTypingInterval = 300; // tempo em ms
+            
+            cityInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                if (cityInput.value.length >= 2) {
+                    typingTimer = setTimeout(fetchCitySuggestions, doneTypingInterval);
+                } else {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Fechar sugestões ao clicar fora
+            document.addEventListener('click', function(e) {
+                if (e.target !== cityInput && e.target !== suggestionsContainer && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Fechar sugestões ao pressionar Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Posicionar as sugestões corretamente
+            function positionSuggestions() {
+                if (suggestionsContainer.style.display === 'block') {
+                    const inputRect = cityInput.getBoundingClientRect();
+                    const parentRect = cityInput.closest('.position-relative').getBoundingClientRect();
+                    
+                    // Garantir que a largura seja a mesma do input
+                    suggestionsContainer.style.width = inputRect.width + 'px';
+                    
+                    // Ajustar o top para posicionar abaixo do input
+                    const topOffset = inputRect.bottom - parentRect.top;
+                    suggestionsContainer.style.top = topOffset + 'px';
+                    
+                    // Definir altura máxima baseada no espaço disponível na tela
+                    const windowHeight = window.innerHeight;
+                    const bottomSpace = windowHeight - inputRect.bottom;
+                    const maxHeight = Math.min(300, bottomSpace - 20); // 20px de margem
+                    suggestionsContainer.style.maxHeight = maxHeight + 'px';
+                }
+            }
+            
+            // Observar redimensionamento da janela
+            window.addEventListener('resize', positionSuggestions);
+            
+            function fetchCitySuggestions() {
+                const query = cityInput.value;
+                
+                fetch(`/api/cidades?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(cities => {
+                        suggestionsContainer.innerHTML = '';
+                        
+                        if (cities.length > 0) {
+                            cities.forEach(city => {
+                                const div = document.createElement('div');
+                                div.className = 'city-suggestion';
+                                div.textContent = city;
+                                div.addEventListener('click', function() {
+                                    cityInput.value = city;
+                                    suggestionsContainer.style.display = 'none';
+                                });
+                                suggestionsContainer.appendChild(div);
+                            });
+                            suggestionsContainer.style.display = 'block';
+                            positionSuggestions();
+                        } else {
+                            suggestionsContainer.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar cidades:', error));
             }
         }
     });
@@ -314,6 +420,53 @@
     .form-switch .form-check-input:checked {
         background-color: var(--secondary);
         border-color: var(--secondary);
+    }
+    
+    /* Estilos para o autocompletar de cidades */
+    .city-input-container {
+        position: relative;
+    }
+    
+    .position-relative {
+        position: relative !important;
+    }
+    
+    .city-autocomplete {
+        position: absolute;
+        z-index: 1050;
+        background: white;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border-radius: 0 0 8px 8px;
+        top: 100%;
+        left: 0;
+        display: none;
+        border: 1px solid #dee2e6;
+        margin-top: 2px;
+    }
+    
+    .city-suggestion {
+        padding: 10px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.4;
+    }
+    
+    .city-suggestion:hover {
+        background-color: #f8f9fa;
+    }
+    
+    /* Melhorar posicionamento no desktop */
+    @media (min-width: 992px) {
+        .city-autocomplete {
+            max-width: 100%;
+            position: absolute;
+        }
     }
 </style>
 {% endblock %} 

@@ -34,12 +34,35 @@
         <div class="card search-card">
             <div class="card-body">
                 <form method="get" action="{{ url_for('main.index') }}" class="search-form">
-                    <div class="input-group">
-                        <span class="input-group-text border-0 bg-transparent">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" name="sport" class="form-control border-0 shadow-none" placeholder="Filtrar por esporte..." value="{{ request.args.get('sport', '') }}">
-                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    <div class="row g-3">
+                        <!-- Título da busca -->
+                        <div class="col-12">
+                            <h5 class="search-title mb-2"><i class="bi bi-search me-2"></i>Filtrar partidas</h5>
+                        </div>
+                        
+                        <!-- Filtro por esporte -->
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating">
+                                <input type="text" name="sport" id="sport-search" class="form-control" placeholder="Filtrar por esporte..." value="{{ request.args.get('sport', '') }}">
+                                <label for="sport-search"><i class="bi bi-trophy me-2"></i>Esporte</label>
+                            </div>
+                        </div>
+                        
+                        <!-- Filtro por cidade -->
+                        <div class="col-12 col-md-6">
+                            <div class="form-floating city-container">
+                                <input type="text" name="city" id="city-search" class="form-control" placeholder="Filtrar por cidade..." value="{{ request.args.get('city', '') }}" autocomplete="off">
+                                <label for="city-search"><i class="bi bi-building me-2"></i>Cidade</label>
+                                <div id="city-suggestions" class="city-autocomplete"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Botão de busca -->
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary w-100 search-btn">
+                                <i class="bi bi-search me-2"></i>Buscar
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -88,6 +111,10 @@
                                 <span>{{ room.get_active_participants()|length }}/{{ room.max_participants }}</span>
                             </p>
                             <p class="room-detail">
+                                <i class="bi bi-building me-2"></i>
+                                <span>{{ room.city }}</span>
+                            </p>
+                            <p class="room-detail">
                                 <i class="bi bi-person me-2"></i>
                                 <span>{{ room.creator.name }}</span>
                             </p>
@@ -95,10 +122,7 @@
                         
                         <div class="progress mb-3">
                             {% set percentage = (room.get_active_participants()|length / room.max_participants) * 100 %}
-                            <div class="progress-bar 
-                                {% if percentage < 50 %}bg-warning
-                                {% elif percentage < 100 %}bg-info
-                                {% else %}bg-success{% endif %}" 
+                            <div class="progress-bar {% if percentage < 50 %}bg-warning{% elif percentage < 100 %}bg-info{% else %}bg-success{% endif %}"
                                 role="progressbar" 
                                 style="width: {{ percentage }}%" 
                                 aria-valuenow="{{ room.get_active_participants()|length }}" 
@@ -195,6 +219,10 @@
                                 <span>{{ room.get_active_participants()|length }}/{{ room.max_participants }}</span>
                             </p>
                             <p class="room-detail">
+                                <i class="bi bi-building me-2"></i>
+                                <span>{{ room.city }}</span>
+                            </p>
+                            <p class="room-detail">
                                 <i class="bi bi-person me-2"></i>
                                 <span>{{ room.creator.name }}</span>
                             </p>
@@ -280,13 +308,102 @@
         color: var(--secondary);
     }
     
+    /* Estilos para a barra de pesquisa */
     .search-card {
-        border-radius: 50px;
+        border-radius: 15px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
     }
     
     .search-form {
         margin-bottom: 0;
+    }
+    
+    .search-title {
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    
+    .search-btn {
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+    
+    /* Estilos para form-floating customizado */
+    .form-floating {
+        position: relative;
+    }
+    
+    .form-floating > .form-control {
+        height: calc(3.5rem + 2px);
+        line-height: 1.25;
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-floating > label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        padding: 1rem 0.75rem;
+        pointer-events: none;
+        border: 1px solid transparent;
+        transform-origin: 0 0;
+        transition: opacity .1s ease-in-out, transform .1s ease-in-out;
+        color: #6c757d;
+    }
+    
+    .form-floating > .form-control:focus,
+    .form-floating > .form-control:not(:placeholder-shown) {
+        padding-top: 1.625rem;
+        padding-bottom: 0.625rem;
+    }
+    
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        opacity: 0.65;
+        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+        background-color: white;
+        height: auto;
+        padding: 0 5px;
+        margin-left: 10px;
+    }
+    
+    /* Estilos para o autocompletar de cidades */
+    .city-container {
+        position: relative;
+    }
+    
+    .city-autocomplete {
+        position: absolute;
+        z-index: 1050;
+        background: white;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        border-radius: 10px;
+        top: calc(100% + 5px);
+        left: 0;
+        display: none;
+        border: 1px solid #dee2e6;
+    }
+    
+    .city-suggestion {
+        padding: 12px 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.2s;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.4;
+    }
+    
+    .city-suggestion:hover {
+        background-color: #f8f9fa;
     }
     
     .section-title {
@@ -335,4 +452,89 @@
         transform: translateY(-10px);
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Autocompletar para cidades
+        const cityInput = document.getElementById('city-search');
+        const suggestionsContainer = document.getElementById('city-suggestions');
+        
+        if (cityInput) {
+            let typingTimer;
+            const doneTypingInterval = 300; // tempo em ms
+            
+            cityInput.addEventListener('input', function() {
+                clearTimeout(typingTimer);
+                if (cityInput.value.length >= 2) {
+                    typingTimer = setTimeout(fetchCitySuggestions, doneTypingInterval);
+                } else {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Fechar sugestões ao clicar fora
+            document.addEventListener('click', function(e) {
+                if (e.target !== cityInput && e.target !== suggestionsContainer && !suggestionsContainer.contains(e.target)) {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Fechar sugestões ao pressionar Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    suggestionsContainer.style.display = 'none';
+                }
+            });
+            
+            // Posicionar as sugestões corretamente
+            function positionSuggestions() {
+                if (suggestionsContainer.style.display === 'block') {
+                    // Usar parentElement para obter o .city-container
+                    const cityContainer = cityInput.closest('.city-container');
+                    const containerRect = cityContainer.getBoundingClientRect();
+                    
+                    // Ajustar posição e dimensões
+                    suggestionsContainer.style.width = containerRect.width + 'px';
+                    
+                    // Garantir que não ultrapasse o limite da tela
+                    const windowHeight = window.innerHeight;
+                    const bottomSpace = windowHeight - containerRect.bottom;
+                    const maxHeight = Math.min(300, bottomSpace - 20);
+                    suggestionsContainer.style.maxHeight = maxHeight + 'px';
+                }
+            }
+            
+            // Observar redimensionamento da janela
+            window.addEventListener('resize', positionSuggestions);
+            
+            function fetchCitySuggestions() {
+                const query = cityInput.value;
+                
+                fetch(`/api/cidades?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(cities => {
+                        suggestionsContainer.innerHTML = '';
+                        
+                        if (cities.length > 0) {
+                            cities.forEach(city => {
+                                const div = document.createElement('div');
+                                div.className = 'city-suggestion';
+                                div.textContent = city;
+                                div.addEventListener('click', function() {
+                                    cityInput.value = city;
+                                    suggestionsContainer.style.display = 'none';
+                                });
+                                suggestionsContainer.appendChild(div);
+                            });
+                            suggestionsContainer.style.display = 'block';
+                            positionSuggestions();
+                        } else {
+                            suggestionsContainer.style.display = 'none';
+                        }
+                    })
+                    .catch(error => console.error('Erro ao buscar cidades:', error));
+            }
+        }
+    });
+</script>
 {% endblock %} 

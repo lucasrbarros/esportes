@@ -58,11 +58,12 @@ class Room(db.Model):
     creator_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     is_private = db.Column(db.Boolean, default=False)
     location = db.Column(db.String(200), nullable=True)
+    city = db.Column(db.String(100), nullable=False)
     
     # Relacionamento com os participantes
     participants = db.relationship('Participant', backref='room', lazy=True)
     
-    def __init__(self, name, sport, date, max_participants, creator_id, description=None, is_private=False, location=None):
+    def __init__(self, name, sport, date, max_participants, creator_id, description=None, is_private=False, location=None, city=None):
         self.name = name
         self.sport = sport
         self.date = date
@@ -71,6 +72,7 @@ class Room(db.Model):
         self.creator_id = creator_id
         self.is_private = is_private
         self.location = location
+        self.city = city or "Não informada"
         self.link_code = secrets.token_urlsafe(6)  # Gera um código único para o link
     
     def is_full(self):

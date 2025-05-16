@@ -22,7 +22,8 @@ def create_room():
             description=form.description.data,
             creator_id=current_user.id,
             is_private=form.is_private.data,
-            location=form.location.data
+            location=form.location.data,
+            city=form.city.data
         )
         
         # Salvar no banco de dados

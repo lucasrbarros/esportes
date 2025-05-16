@@ -15,12 +15,16 @@
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item"><strong>Data e Hora:</strong> {{ room.date.strftime('%d/%m/%Y %H:%M') }}</li>
                     <li class="list-group-item"><strong>Participantes:</strong> {{ room.get_active_participants()|length }}/{{ room.max_participants }}</li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-building me-1"></i>Cidade:</strong> 
+                        <span>{{ room.city }}</span>
+                    </li>
                     {% if room.location %}
                         <li class="list-group-item">
                             <strong><i class="bi bi-geo-alt me-1"></i>Local:</strong> 
                             <span>{{ room.location }}</span>
                             {% if room.location|length > 5 %}
-                                <a href="https://maps.google.com/?q={{ room.location }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                                <a href="https://maps.google.com/?q={{ room.city }}, {{ room.location }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
                                     <i class="bi bi-map"></i> Ver no mapa
                                 </a>
                             {% endif %}

@@ -41,6 +41,7 @@ class CreateRoomForm(FlaskForm):
         DataRequired(),
         NumberRange(min=2, message='A sala deve ter pelo menos 2 participantes')
     ])
+    city = StringField('Cidade', validators=[DataRequired(), Length(min=2, max=100)])
     location = StringField('Local', validators=[Optional(), Length(max=200)])
     description = TextAreaField('Descrição (opcional)', validators=[Optional(), Length(max=500)])
     is_private = BooleanField('Sala Privada')
@@ -53,6 +54,7 @@ class JoinRoomForm(FlaskForm):
 
 class SearchRoomForm(FlaskForm):
     sport = StringField('Filtrar por Esporte', validators=[Optional()])
+    city = StringField('Filtrar por Cidade', validators=[Optional()])
     submit = SubmitField('Buscar')
 
 class EditRoomForm(FlaskForm):
@@ -63,6 +65,7 @@ class EditRoomForm(FlaskForm):
         DataRequired(),
         NumberRange(min=2, message='A sala deve ter pelo menos 2 participantes')
     ])
+    city = StringField('Cidade', validators=[DataRequired(), Length(min=2, max=100)])
     location = StringField('Local', validators=[Optional(), Length(max=200)])
     description = TextAreaField('Descrição (opcional)', validators=[Optional(), Length(max=500)])
     is_private = BooleanField('Sala Privada')

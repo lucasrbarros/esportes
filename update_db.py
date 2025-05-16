@@ -35,6 +35,13 @@ if os.path.exists(db_path):
         else:
             print("A coluna 'location' já existe na tabela 'rooms'.")
         
+        # Adicionar coluna city se não existir
+        if 'city' not in column_names:
+            cursor.execute("ALTER TABLE rooms ADD COLUMN city TEXT DEFAULT 'Não informada'")
+            print("Coluna 'city' adicionada com sucesso à tabela 'rooms'!")
+        else:
+            print("A coluna 'city' já existe na tabela 'rooms'.")
+        
         # Confirmar as alterações
         conn.commit()
         
