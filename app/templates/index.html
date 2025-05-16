@@ -5,19 +5,21 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="row align-items-center hero-section mb-5" data-aos="fade-up">
+    <div class="circle-decoration top-right"></div>
+    <div class="circle-decoration bottom-left"></div>
     <div class="col-lg-7">
-        <h1 class="display-4 fw-bold mb-3">Organize suas partidas esportivas</h1>
+        <h1 class="display-4 fw-bold mb-4">Organize suas partidas esportivas</h1>
         <p class="lead mb-4">Crie salas para diferentes esportes, compartilhe com amigos e gerencie todos os participantes de forma simples e prática.</p>
         {% if current_user.is_authenticated %}
-        <a href="{{ url_for('room.create_room') }}" class="btn btn-primary btn-lg me-2">
-            <i class="bi bi-plus-circle"></i> Criar Nova Sala
+        <a href="{{ url_for('room.create_room') }}" class="btn btn-primary btn-lg glow-effect">
+            <i class="bi bi-plus-circle me-2"></i> Criar Nova Sala
         </a>
         {% else %}
-        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-2">
-            <i class="bi bi-box-arrow-in-right"></i> Entrar
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-3 glow-effect">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Entrar
         </a>
         <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">
-            <i class="bi bi-person-plus"></i> Registrar
+            <i class="bi bi-person-plus me-2"></i> Registrar
         </a>
         {% endif %}
     </div>
@@ -29,7 +31,7 @@
 </div>
 
 <!-- Barra de pesquisa -->
-<div class="row mb-4" data-aos="fade-up" data-aos-delay="100">
+<div class="row mb-5" data-aos="fade-up" data-aos-delay="100">
     <div class="col-md-12">
         <div class="card search-card">
             <div class="card-body">
@@ -37,7 +39,7 @@
                     <div class="row g-3">
                         <!-- Título da busca -->
                         <div class="col-12">
-                            <h5 class="search-title mb-2"><i class="bi bi-search me-2"></i>Filtrar partidas</h5>
+                            <h5 class="search-title"><i class="bi bi-search me-2"></i>Filtrar partidas</h5>
                         </div>
                         
                         <!-- Filtro por esporte -->
@@ -78,7 +80,14 @@
     <div class="row">
         {% for room in upcoming_rooms %}
             <div class="col-md-4 mb-4">
-                <div class="card room-card h-100">
+                <div class="card room-card h-100 hover-card-effect">
+                    <div class="status-badge status-{% if room.get_active_participants()|length >= room.max_participants %}full{% else %}open{% endif %}">
+                        {% if room.get_active_participants()|length >= room.max_participants %}
+                            <i class="bi bi-people-fill me-1"></i> Lotado
+                        {% else %}
+                            <i class="bi bi-unlock me-1"></i> Aberto
+                        {% endif %}
+                    </div>
                     <div class="card-header">
                         <span class="sport-icon">
                             {% if room.sport|lower == 'futebol' %}
@@ -99,30 +108,37 @@
                         <h5 class="card-title">{{ room.name }}</h5>
                         <div class="room-info">
                             <p class="room-detail">
-                                <i class="bi bi-calendar3 me-2"></i>
+                                <i class="bi bi-calendar3"></i>
                                 <span>{{ room.date.strftime('%d/%m/%Y') }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-clock me-2"></i>
+                                <i class="bi bi-clock"></i>
                                 <span>{{ room.date.strftime('%H:%M') }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-people me-2"></i>
+                                <i class="bi bi-people"></i>
                                 <span>{{ room.get_active_participants()|length }}/{{ room.max_participants }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-building me-2"></i>
+                                <i class="bi bi-building"></i>
                                 <span>{{ room.city }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-person me-2"></i>
+                                <i class="bi bi-person"></i>
                                 <span>{{ room.creator.name }}</span>
                             </p>
                         </div>
                         
                         <div class="progress mb-3">
                             {% set percentage = (room.get_active_participants()|length / room.max_participants) * 100 %}
-                            <div class="progress-bar {% if percentage < 50 %}bg-warning{% elif percentage < 100 %}bg-info{% else %}bg-success{% endif %}"
+                            {% if percentage < 50 %}
+                                {% set status_class = "bg-warning" %}
+                            {% elif percentage < 100 %}
+                                {% set status_class = "bg-info" %}
+                            {% else %}
+                                {% set status_class = "bg-success" %}
+                            {% endif %}
+                            <div class="progress-bar {{ status_class }}"
                                 role="progressbar" 
                                 style="width: {{ percentage }}%" 
                                 aria-valuenow="{{ room.get_active_participants()|length }}" 
@@ -135,22 +151,22 @@
                         <div class="room-actions">
                             <div class="d-grid gap-2">
                                 <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="btn btn-outline-primary">
-                                    <i class="bi bi-eye"></i> Ver detalhes
+                                    <i class="bi bi-eye me-2"></i> Ver detalhes
                                 </a>
                                 {% if current_user.is_authenticated %}
                                     {% if room.creator_id == current_user.id %}
                                         <a href="{{ url_for('room.manage_room', link_code=room.link_code) }}" class="btn btn-outline-secondary">
-                                            <i class="bi bi-gear"></i> Gerenciar
+                                            <i class="bi bi-gear me-2"></i> Gerenciar
                                         </a>
                                     {% elif room.id in user_participations %}
                                         <a href="{{ url_for('room.leave_room', link_code=room.link_code) }}" 
                                         class="btn btn-outline-danger"
                                         onclick="return confirm('Tem certeza que deseja sair desta sala?')">
-                                            <i class="bi bi-box-arrow-left"></i> Sair
+                                            <i class="bi bi-box-arrow-left me-2"></i> Sair
                                         </a>
                                     {% else %}
                                         <a href="{{ url_for('room.join_room', link_code=room.link_code) }}" class="btn btn-success">
-                                            <i class="bi bi-check-circle"></i> Participar
+                                            <i class="bi bi-check-circle me-2"></i> Participar
                                         </a>
                                     {% endif %}
                                 {% endif %}
@@ -158,7 +174,7 @@
                         </div>
                     </div>
                     <div class="card-footer text-muted">
-                        <small>Criado em {{ room.created_at.strftime('%d/%m/%Y') }}</small>
+                        <small><i class="bi bi-clock-history me-1"></i> Criado em {{ room.created_at.strftime('%d/%m/%Y') }}</small>
                     </div>
                 </div>
             </div>
@@ -187,6 +203,9 @@
         {% for room in past_rooms %}
             <div class="col-md-4 mb-4">
                 <div class="card room-card h-100 past-room">
+                    <div class="status-badge status-closed">
+                        <i class="bi bi-lock me-1"></i> Encerrado
+                    </div>
                     <div class="card-header bg-secondary">
                         <span class="sport-icon">
                             {% if room.sport|lower == 'futebol' %}
@@ -207,34 +226,34 @@
                         <h5 class="card-title">{{ room.name }}</h5>
                         <div class="room-info">
                             <p class="room-detail">
-                                <i class="bi bi-calendar3 me-2"></i>
+                                <i class="bi bi-calendar3"></i>
                                 <span>{{ room.date.strftime('%d/%m/%Y') }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-clock me-2"></i>
+                                <i class="bi bi-clock"></i>
                                 <span>{{ room.date.strftime('%H:%M') }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-people me-2"></i>
+                                <i class="bi bi-people"></i>
                                 <span>{{ room.get_active_participants()|length }}/{{ room.max_participants }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-building me-2"></i>
+                                <i class="bi bi-building"></i>
                                 <span>{{ room.city }}</span>
                             </p>
                             <p class="room-detail">
-                                <i class="bi bi-person me-2"></i>
+                                <i class="bi bi-person"></i>
                                 <span>{{ room.creator.name }}</span>
                             </p>
                         </div>
                         <div class="d-grid gap-2 mt-3">
                             <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-eye"></i> Ver detalhes
+                                <i class="bi bi-eye me-2"></i> Ver detalhes
                             </a>
                         </div>
                     </div>
                     <div class="card-footer text-muted">
-                        <span class="badge bg-secondary">Encerrado</span>
+                        <small><i class="bi bi-clock-history me-1"></i> Realizado em {{ room.date.strftime('%d/%m/%Y') }}</small>
                     </div>
                 </div>
             </div>
@@ -297,162 +316,6 @@
 {% endblock %}
 
 {% block scripts %}
-<style>
-    .hero-section {
-        min-height: 350px;
-        margin-top: 30px;
-    }
-    
-    .hero-icon {
-        font-size: 8rem;
-        color: var(--secondary);
-    }
-    
-    /* Estilos para a barra de pesquisa */
-    .search-card {
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        margin-bottom: 30px;
-    }
-    
-    .search-form {
-        margin-bottom: 0;
-    }
-    
-    .search-title {
-        color: var(--primary);
-        font-weight: 600;
-        font-size: 1.1rem;
-    }
-    
-    .search-btn {
-        padding: 12px;
-        font-weight: 600;
-        border-radius: 10px;
-    }
-    
-    /* Estilos para form-floating customizado */
-    .form-floating {
-        position: relative;
-    }
-    
-    .form-floating > .form-control {
-        height: calc(3.5rem + 2px);
-        line-height: 1.25;
-        padding: 1rem 0.75rem;
-    }
-    
-    .form-floating > label {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        padding: 1rem 0.75rem;
-        pointer-events: none;
-        border: 1px solid transparent;
-        transform-origin: 0 0;
-        transition: opacity .1s ease-in-out, transform .1s ease-in-out;
-        color: #6c757d;
-    }
-    
-    .form-floating > .form-control:focus,
-    .form-floating > .form-control:not(:placeholder-shown) {
-        padding-top: 1.625rem;
-        padding-bottom: 0.625rem;
-    }
-    
-    .form-floating > .form-control:focus ~ label,
-    .form-floating > .form-control:not(:placeholder-shown) ~ label {
-        opacity: 0.65;
-        transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
-        background-color: white;
-        height: auto;
-        padding: 0 5px;
-        margin-left: 10px;
-    }
-    
-    /* Estilos para o autocompletar de cidades */
-    .city-container {
-        position: relative;
-    }
-    
-    .city-autocomplete {
-        position: absolute;
-        z-index: 1050;
-        background: white;
-        width: 100%;
-        max-height: 300px;
-        overflow-y: auto;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        border-radius: 10px;
-        top: calc(100% + 5px);
-        left: 0;
-        display: none;
-        border: 1px solid #dee2e6;
-    }
-    
-    .city-suggestion {
-        padding: 12px 15px;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-        transition: background-color 0.2s;
-        white-space: normal;
-        word-break: break-word;
-        line-height: 1.4;
-    }
-    
-    .city-suggestion:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .section-title {
-        margin-top: 40px;
-        color: var(--primary);
-        font-weight: 700;
-    }
-    
-    .room-info {
-        margin-bottom: 15px;
-    }
-    
-    .room-detail {
-        margin-bottom: 5px;
-        color: var(--gray-dark);
-        display: flex;
-        align-items: center;
-    }
-    
-    .room-detail i {
-        min-width: 20px;
-    }
-    
-    .past-room {
-        opacity: 0.8;
-    }
-    
-    .how-icon {
-        font-size: 2.5rem;
-        color: var(--secondary);
-        background-color: rgba(52, 152, 219, 0.1);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-    }
-    
-    .how-card {
-        transition: all 0.3s ease;
-    }
-    
-    .how-card:hover {
-        transform: translateY(-10px);
-    }
-</style>
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Autocompletar para cidades
@@ -499,7 +362,7 @@
                     // Garantir que não ultrapasse o limite da tela
                     const windowHeight = window.innerHeight;
                     const bottomSpace = windowHeight - containerRect.bottom;
-                    const maxHeight = Math.min(300, bottomSpace - 20);
+                    const maxHeight = Math.min(350, bottomSpace - 20);
                     suggestionsContainer.style.maxHeight = maxHeight + 'px';
                 }
             }
