@@ -1,0 +1,242 @@
+{% extends 'layout.html' %}
+
+{% block title %}Editar {{ room.name }} - Esporte+{% endblock %}
+
+{% block content %}
+<div class="content-visible">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card edit-room-card" data-aos="fade-up" data-aos-duration="400">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Sala</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{{ url_for('room.edit_room', link_code=room.link_code) }}" class="edit-room-form">
+                        {{ form.csrf_token }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="{{ form.name.id }}" class="form-label">
+                                        <i class="bi bi-tag me-2"></i>{{ form.name.label.text }}
+                                    </label>
+                                    {{ form.name(class="form-control form-control-lg", placeholder="Ex: Futebol de Quarta") }}
+                                    <div class="form-text">Escolha um nome descritivo para sua sala</div>
+                                    {% if form.name.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.name.errors %}
+                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="{{ form.sport.id }}" class="form-label">
+                                        <i class="bi bi-trophy me-2"></i>{{ form.sport.label.text }}
+                                    </label>
+                                    {{ form.sport(class="form-control form-control-lg", placeholder="Ex: Futebol, Vôlei, Basquete") }}
+                                    <div class="form-text">Tipo de esporte que será praticado</div>
+                                    {% if form.sport.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.sport.errors %}
+                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="{{ form.date.id }}" class="form-label">
+                                        <i class="bi bi-calendar-event me-2"></i>{{ form.date.label.text }}
+                                    </label>
+                                    <div class="input-group">
+                                        {{ form.date(class="form-control form-control-lg", type="datetime-local") }}
+                                        <span class="input-group-text"><i class="bi bi-clock"></i></span>
+                                    </div>
+                                    <div class="form-text">Quando o evento irá acontecer</div>
+                                    {% if form.date.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.date.errors %}
+                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="{{ form.max_participants.id }}" class="form-label">
+                                        <i class="bi bi-people me-2"></i>{{ form.max_participants.label.text }}
+                                    </label>
+                                    <div class="input-group">
+                                        {{ form.max_participants(class="form-control form-control-lg", type="number", min=2) }}
+                                        <span class="input-group-text"><i class="bi bi-person-plus"></i></span>
+                                    </div>
+                                    <div class="form-text">Quantas pessoas podem participar</div>
+                                    {% if form.max_participants.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.max_participants.errors %}
+                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-group">
+                                <label for="{{ form.location.id }}" class="form-label">
+                                    <i class="bi bi-geo-alt me-2"></i>{{ form.location.label.text }}
+                                </label>
+                                <div class="input-group">
+                                    {{ form.location(class="form-control form-control-lg", placeholder="Ex: Quadra Poliesportiva, Rua das Flores, 123") }}
+                                    <span class="input-group-text"><i class="bi bi-pin-map"></i></span>
+                                </div>
+                                <div class="form-text">Onde a partida será realizada</div>
+                                {% if form.location.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.location.errors %}
+                                            <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <div class="form-group">
+                                <label for="{{ form.description.id }}" class="form-label">
+                                    <i class="bi bi-card-text me-2"></i>{{ form.description.label.text }}
+                                </label>
+                                {{ form.description(class="form-control", rows=4, placeholder="Adicione informações importantes como regras, o que levar, etc.") }}
+                                <div class="form-text">Informações adicionais sobre o evento (opcional)</div>
+                                {% if form.description.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.description.errors %}
+                                            <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4 privacy-option">
+                            <div class="card privacy-card">
+                                <div class="card-body">
+                                    <div class="form-check form-switch">
+                                        {{ form.is_private(class="form-check-input") }}
+                                        <label class="form-check-label" for="{{ form.is_private.id }}">
+                                            <i class="bi bi-lock me-2"></i>{{ form.is_private.label.text }}
+                                        </label>
+                                    </div>
+                                    <div class="privacy-info mt-2">
+                                        <p class="mb-0">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <small>Salas privadas só aparecem para o organizador e participantes convidados via link.</small>
+                                        </p>
+                                        <p class="mb-0">
+                                            <i class="bi bi-globe me-1"></i>
+                                            <small>Salas públicas aparecem para todos na página inicial.</small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg save-btn">
+                                <i class="bi bi-check-circle me-2"></i>Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3 mb-5">
+                <a href="{{ url_for('room.manage_room', link_code=room.link_code) }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>Voltar para gerenciamento
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Definir a data mínima como hoje
+        const dateInput = document.getElementById('{{ form.date.id }}');
+        if (dateInput) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            
+            const today = `${year}-${month}-${day}T${hours}:${minutes}`;
+            dateInput.min = today;
+        }
+    });
+</script>
+<style>
+    .edit-room-card {
+        border: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        margin-top: 20px;
+    }
+    
+    .edit-room-card .card-header {
+        padding: 20px 25px;
+    }
+    
+    .edit-room-card .card-body {
+        padding: 30px;
+    }
+    
+    .edit-room-form .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--primary);
+    }
+    
+    .edit-room-form .form-text {
+        color: var(--gray);
+        margin-top: 5px;
+        font-size: 0.85rem;
+    }
+    
+    .edit-room-form .form-control {
+        padding: 12px 15px;
+        border-color: var(--gray-light);
+        transition: all 0.3s ease;
+    }
+    
+    .edit-room-form .form-control:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+    }
+    
+    .privacy-card {
+        background-color: #f8f9fa;
+        border-left: 4px solid var(--primary);
+    }
+    
+    .content-visible {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+    }
+</style>
+{% endblock %} 

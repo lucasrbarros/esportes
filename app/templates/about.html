@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block title %}Sobre - Esportes em Grupo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h1 class="mb-4">Sobre o Esportes em Grupo</h1>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">O que é?</h5>
+                <p class="card-text">
+                    O <strong>Esportes em Grupo</strong> é uma plataforma web desenvolvida para facilitar a organização de partidas esportivas entre amigos.
+                    Ele substitui as tradicionais listas de confirmação em grupos de mensagens, tornando o processo mais organizado e eficiente.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Como funciona?</h5>
+                <p class="card-text">
+                    É simples! Qualquer pessoa pode criar uma "sala" para um evento esportivo, definindo detalhes como o esporte, data, horário e número máximo de participantes.
+                    Um link único é gerado para cada sala, permitindo que os amigos se inscrevam facilmente. O sistema gerencia automaticamente a lista de participantes e até mesmo cria uma lista de espera quando necessário.
+                </p>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Principais recursos</h5>
+                <ul>
+                    <li>Criação de salas para diferentes esportes</li>
+                    <li>Compartilhamento fácil via link</li>
+                    <li>Gerenciamento de participantes</li>
+                    <li>Lista de espera automática</li>
+                    <li>Painel de controle para organizadores</li>
+                    <li>Interface simples e intuitiva</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Contato</h5>
+                <p class="card-text">
+                    Este é um projeto de código aberto desenvolvido com Flask e SQLite.
+                    Para sugestões ou dúvidas, entre em contato através do email: <a href="mailto:contato@esportesemgrupo.com.br">contato@esportesemgrupo.com.br</a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">Voltar para a página inicial</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

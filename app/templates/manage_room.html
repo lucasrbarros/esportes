@@ -1,0 +1,217 @@
+{% extends 'layout.html' %}
+
+{% block title %}Gerenciar {{ room.name }} - Esportes em Grupo{% endblock %}
+
+{% block content %}
+<div class="row content-visible">
+    <div class="col-md-8">
+        <h1>Gerenciar Sala</h1>
+        <h3>{{ room.name }} <span class="badge bg-primary">{{ room.sport }}</span></h3>
+        
+        <!-- Informações da sala -->
+        <div class="card mb-4" data-aos="fade-up" data-aos-duration="300">
+            <div class="card-body">
+                <h5 class="card-title">Detalhes</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Data e Hora:</strong> {{ room.date.strftime('%d/%m/%Y %H:%M') }}</li>
+                    <li class="list-group-item"><strong>Participantes:</strong> {{ room.get_active_participants()|length }}/{{ room.max_participants }}</li>
+                    {% if room.location %}
+                        <li class="list-group-item">
+                            <strong><i class="bi bi-geo-alt me-1"></i>Local:</strong> 
+                            <span>{{ room.location }}</span>
+                            {% if room.location|length > 5 %}
+                                <a href="https://maps.google.com/?q={{ room.location }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                                    <i class="bi bi-map"></i> Ver no mapa
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endif %}
+                    {% if room.description %}
+                        <li class="list-group-item"><strong>Descrição:</strong> {{ room.description }}</li>
+                    {% endif %}
+                    <li class="list-group-item">
+                        <strong>Visibilidade:</strong> 
+                        {% if room.is_private %}
+                            <span class="badge bg-secondary">
+                                <i class="bi bi-lock-fill me-1"></i>Privada
+                            </span>
+                            <small class="text-muted ms-2">Apenas convidados podem ver esta sala</small>
+                        {% else %}
+                            <span class="badge bg-info">
+                                <i class="bi bi-globe me-1"></i>Pública
+                            </span>
+                            <small class="text-muted ms-2">Visível para todos na página inicial</small>
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item"><strong>Status:</strong> 
+                        {% if room.is_active %}
+                            <span class="badge bg-success">Ativa</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Encerrada</span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Link para compartilhar -->
+        <div class="share-link" data-aos="fade-up" data-aos-duration="300">
+            <h5>Link da Sala</h5>
+            <p>Compartilhe este link com seus amigos para que eles possam participar:</p>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" value="{{ url_for('room.view_room', link_code=room.link_code, _external=True) }}" id="share-url" readonly>
+                <button class="btn btn-outline-primary" type="button" onclick="copyShareLink()">Copiar</button>
+            </div>
+        </div>
+        
+        <!-- Ações -->
+        <div class="mt-4 mb-5" data-aos="fade-up" data-aos-duration="300">
+            {% if room.is_active %}
+                <a href="{{ url_for('room.edit_room', link_code=room.link_code) }}" class="btn btn-primary me-2">
+                    <i class="bi bi-pencil-square me-2"></i>Editar Sala
+                </a>
+                <a href="{{ url_for('room.close_room', link_code=room.link_code) }}" 
+                   class="btn btn-danger"
+                   onclick="return confirm('Tem certeza que deseja encerrar esta sala? Isso impedirá novas inscrições.')">
+                    <i class="bi bi-x-circle me-2"></i>Encerrar Sala
+                </a>
+            {% endif %}
+            <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Voltar
+            </a>
+            
+            <button type="button" class="btn btn-outline-danger float-end" data-bs-toggle="modal" data-bs-target="#deleteRoomModal">
+                <i class="bi bi-trash me-2"></i>Excluir Sala
+            </button>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Lista de participantes -->
+        <div class="card" data-aos="fade-up" data-aos-duration="300">
+            <div class="card-header">
+                <h5 class="mb-0">Lista de Participantes</h5>
+            </div>
+            <div class="card-body">
+                {% if room.get_active_participants() %}
+                    <h6>Confirmados ({{ room.get_confirmed_participants()|length }}/{{ room.max_participants }})</h6>
+                    <div class="participant-list mb-3">
+                        {% for participant in room.get_confirmed_participants() %}
+                            <div class="participant-item">
+                                {{ loop.index }}. {{ participant.user.name }}
+                                {% if participant.user_id == room.creator_id %}
+                                    <span class="badge bg-primary ms-2">Organizador</span>
+                                {% else %}
+                                    <a href="{{ url_for('room.remove_participant', link_code=room.link_code, participant_id=participant.id) }}" 
+                                       class="btn btn-sm btn-outline-danger float-end"
+                                       onclick="return confirm('Tem certeza que deseja remover este participante?')">
+                                        Remover
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if room.get_waiting_list() %}
+                        <h6>Lista de Espera ({{ room.get_waiting_list()|length }})</h6>
+                        <div class="participant-list waiting-list">
+                            {% for participant in room.get_waiting_list() %}
+                                <div class="participant-item">
+                                    {{ loop.index + room.max_participants }}. {{ participant.user.name }}
+                                    {% if participant.user_id == room.creator_id %}
+                                        <span class="badge bg-primary ms-2">Organizador</span>
+                                    {% else %}
+                                        <a href="{{ url_for('room.remove_participant', link_code=room.link_code, participant_id=participant.id) }}" 
+                                           class="btn btn-sm btn-outline-danger float-end"
+                                           onclick="return confirm('Tem certeza que deseja remover este participante?')">
+                                            Remover
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted">Ainda não há participantes inscritos.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmação para excluir sala -->
+<div class="modal fade" id="deleteRoomModal" tabindex="-1" aria-labelledby="deleteRoomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteRoomModalLabel">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Excluir Sala
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Você está prestes a <strong>excluir permanentemente</strong> esta sala:</p>
+                <div class="alert alert-warning">
+                    <h5>{{ room.name }}</h5>
+                    <p class="mb-0"><strong>Esporte:</strong> {{ room.sport }}</p>
+                    <p class="mb-0"><strong>Data:</strong> {{ room.date.strftime('%d/%m/%Y %H:%M') }}</p>
+                    <p class="mb-0"><strong>Participantes:</strong> {{ room.get_active_participants()|length }}</p>
+                </div>
+                <p class="text-danger"><i class="bi bi-exclamation-circle me-2"></i>Esta ação não pode ser desfeita!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a href="{{ url_for('room.delete_room', link_code=room.link_code) }}" class="btn btn-danger">
+                    <i class="bi bi-trash me-2"></i>Excluir Permanentemente
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function copyShareLink() {
+        var copyText = document.getElementById("share-url");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("Link copiado para a área de transferência!");
+    }
+    
+    // Garantir que o conteúdo seja visível após o carregamento da página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Forçar atualização do AOS após carregamento completo
+        setTimeout(function() {
+            AOS.refresh();
+        }, 100);
+    });
+</script>
+<style>
+    /* Garantir que o conteúdo seja sempre visível */
+    .content-visible {
+        opacity: 1 !important;
+        transform: none !important;
+        visibility: visible !important;
+    }
+    
+    /* Ajustar animações para serem mais suaves */
+    [data-aos] {
+        transition-duration: 400ms !important;
+    }
+    
+    /* Estilo para o modal de exclusão */
+    #deleteRoomModal .modal-header {
+        border-bottom: none;
+    }
+    
+    #deleteRoomModal .modal-footer {
+        border-top: none;
+    }
+    
+    #deleteRoomModal .alert {
+        border-left: 4px solid var(--warning);
+    }
+</style>
+{% endblock %} 

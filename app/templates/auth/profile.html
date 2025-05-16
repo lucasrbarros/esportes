@@ -1,0 +1,89 @@
+{% extends 'layout.html' %}
+
+{% block title %}Perfil - Esportes em Grupo{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Meu Perfil</h1>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Informações Pessoais</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Nome:</strong> {{ current_user.name }}</li>
+                    <li class="list-group-item"><strong>Nome de Usuário:</strong> {{ current_user.username }}</li>
+                    <li class="list-group-item"><strong>Email:</strong> {{ current_user.email }}</li>
+                    <li class="list-group-item"><strong>Membro desde:</strong> {{ current_user.created_at.strftime('%d/%m/%Y') }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Salas criadas pelo usuário -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Minhas Salas</h5>
+            </div>
+            <div class="card-body">
+                {% if rooms_created %}
+                    <div class="list-group">
+                        {% for room in rooms_created %}
+                            <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ room.name }}</h5>
+                                    <small>{{ room.date.strftime('%d/%m/%Y %H:%M') }}</small>
+                                </div>
+                                <p class="mb-1">{{ room.sport }}</p>
+                                <small>{{ room.get_active_participants()|length }}/{{ room.max_participants }} participantes</small>
+                                {% if room.is_active %}
+                                    <span class="badge bg-success float-end">Ativa</span>
+                                {% else %}
+                                    <span class="badge bg-secondary float-end">Encerrada</span>
+                                {% endif %}
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Você ainda não criou nenhuma sala.</p>
+                    <a href="{{ url_for('room.create_room') }}" class="btn btn-primary">Criar Sala</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Participações do usuário -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Minhas Participações</h5>
+            </div>
+            <div class="card-body">
+                {% if participations %}
+                    <div class="list-group">
+                        {% for participant, room in participations %}
+                            <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ room.name }}</h5>
+                                    <small>{{ room.date.strftime('%d/%m/%Y %H:%M') }}</small>
+                                </div>
+                                <p class="mb-1">{{ room.sport }}</p>
+                                <small>Organizado por: {{ room.creator.name }}</small>
+                                <button class="btn btn-sm btn-outline-danger float-end" 
+                                        onclick="if(confirm('Tem certeza que deseja sair desta sala?')) window.location.href='{{ url_for('room.leave_room', link_code=room.link_code) }}'">
+                                    Sair
+                                </button>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Você ainda não está participando de nenhuma sala.</p>
+                    <a href="{{ url_for('main.index') }}" class="btn btn-success">Encontrar Salas</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

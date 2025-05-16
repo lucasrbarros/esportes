@@ -1,0 +1,338 @@
+{% extends 'layout.html' %}
+
+{% block title %}Esporte+ | Organize seus jogos{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row align-items-center hero-section mb-5" data-aos="fade-up">
+    <div class="col-lg-7">
+        <h1 class="display-4 fw-bold mb-3">Organize suas partidas esportivas</h1>
+        <p class="lead mb-4">Crie salas para diferentes esportes, compartilhe com amigos e gerencie todos os participantes de forma simples e prática.</p>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('room.create_room') }}" class="btn btn-primary btn-lg me-2">
+            <i class="bi bi-plus-circle"></i> Criar Nova Sala
+        </a>
+        {% else %}
+        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-2">
+            <i class="bi bi-box-arrow-in-right"></i> Entrar
+        </a>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-person-plus"></i> Registrar
+        </a>
+        {% endif %}
+    </div>
+    <div class="col-lg-5">
+        <div class="hero-image text-center" data-aos="fade-left" data-aos-delay="200">
+            <i class="bi bi-people-fill hero-icon"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Barra de pesquisa -->
+<div class="row mb-4" data-aos="fade-up" data-aos-delay="100">
+    <div class="col-md-12">
+        <div class="card search-card">
+            <div class="card-body">
+                <form method="get" action="{{ url_for('main.index') }}" class="search-form">
+                    <div class="input-group">
+                        <span class="input-group-text border-0 bg-transparent">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="sport" class="form-control border-0 shadow-none" placeholder="Filtrar por esporte..." value="{{ request.args.get('sport', '') }}">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Salas próximas -->
+<h2 class="section-title mb-4" data-aos="fade-up">
+    <i class="bi bi-calendar-event me-2"></i>Próximas partidas
+</h2>
+{% if upcoming_rooms %}
+    <div class="row">
+        {% for room in upcoming_rooms %}
+            <div class="col-md-4 mb-4">
+                <div class="card room-card h-100">
+                    <div class="card-header">
+                        <span class="sport-icon">
+                            {% if room.sport|lower == 'futebol' %}
+                                <i class="bi bi-dribbble"></i>
+                            {% elif room.sport|lower == 'vôlei' or room.sport|lower == 'volei' %}
+                                <i class="bi bi-broadcast"></i>
+                            {% elif room.sport|lower == 'basquete' %}
+                                <i class="bi bi-dribbble"></i>
+                            {% elif room.sport|lower == 'tênis' or room.sport|lower == 'tenis' %}
+                                <i class="bi bi-disc"></i>
+                            {% else %}
+                                <i class="bi bi-trophy"></i>
+                            {% endif %}
+                        </span>
+                        {{ room.sport }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ room.name }}</h5>
+                        <div class="room-info">
+                            <p class="room-detail">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                <span>{{ room.date.strftime('%d/%m/%Y') }}</span>
+                            </p>
+                            <p class="room-detail">
+                                <i class="bi bi-clock me-2"></i>
+                                <span>{{ room.date.strftime('%H:%M') }}</span>
+                            </p>
+                            <p class="room-detail">
+                                <i class="bi bi-people me-2"></i>
+                                <span>{{ room.get_active_participants()|length }}/{{ room.max_participants }}</span>
+                            </p>
+                            <p class="room-detail">
+                                <i class="bi bi-person me-2"></i>
+                                <span>{{ room.creator.name }}</span>
+                            </p>
+                        </div>
+                        
+                        <div class="progress mb-3">
+                            {% set percentage = (room.get_active_participants()|length / room.max_participants) * 100 %}
+                            <div class="progress-bar 
+                                {% if percentage < 50 %}bg-warning
+                                {% elif percentage < 100 %}bg-info
+                                {% else %}bg-success{% endif %}" 
+                                role="progressbar" 
+                                style="width: {{ percentage }}%" 
+                                aria-valuenow="{{ room.get_active_participants()|length }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="{{ room.max_participants }}">
+                                {{ room.get_active_participants()|length }}/{{ room.max_participants }}
+                            </div>
+                        </div>
+                        
+                        <div class="room-actions">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="btn btn-outline-primary">
+                                    <i class="bi bi-eye"></i> Ver detalhes
+                                </a>
+                                {% if current_user.is_authenticated %}
+                                    {% if room.creator_id == current_user.id %}
+                                        <a href="{{ url_for('room.manage_room', link_code=room.link_code) }}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-gear"></i> Gerenciar
+                                        </a>
+                                    {% elif room.id in user_participations %}
+                                        <a href="{{ url_for('room.leave_room', link_code=room.link_code) }}" 
+                                        class="btn btn-outline-danger"
+                                        onclick="return confirm('Tem certeza que deseja sair desta sala?')">
+                                            <i class="bi bi-box-arrow-left"></i> Sair
+                                        </a>
+                                    {% else %}
+                                        <a href="{{ url_for('room.join_room', link_code=room.link_code) }}" class="btn btn-success">
+                                            <i class="bi bi-check-circle"></i> Participar
+                                        </a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>Criado em {{ room.created_at.strftime('%d/%m/%Y') }}</small>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info d-flex align-items-center" role="alert" data-aos="fade-up">
+        <i class="bi bi-info-circle-fill me-2 flex-shrink-0" style="font-size: 1.5rem;"></i>
+        <div>
+            Não há partidas agendadas no momento. 
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('room.create_room') }}" class="alert-link">Crie uma nova sala!</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="alert-link">Faça login</a> para criar uma nova sala!
+            {% endif %}
+        </div>
+    </div>
+{% endif %}
+
+<!-- Partidas passadas -->
+{% if past_rooms %}
+    <h2 class="section-title mt-5 mb-4" data-aos="fade-up">
+        <i class="bi bi-clock-history me-2"></i>Partidas anteriores
+    </h2>
+    <div class="row">
+        {% for room in past_rooms %}
+            <div class="col-md-4 mb-4">
+                <div class="card room-card h-100 past-room">
+                    <div class="card-header bg-secondary">
+                        <span class="sport-icon">
+                            {% if room.sport|lower == 'futebol' %}
+                                <i class="bi bi-dribbble"></i>
+                            {% elif room.sport|lower == 'vôlei' or room.sport|lower == 'volei' %}
+                                <i class="bi bi-broadcast"></i>
+                            {% elif room.sport|lower == 'basquete' %}
+                                <i class="bi bi-dribbble"></i>
+                            {% elif room.sport|lower == 'tênis' or room.sport|lower == 'tenis' %}
+                                <i class="bi bi-disc"></i>
+                            {% else %}
+                                <i class="bi bi-trophy"></i>
+                            {% endif %}
+                        </span>
+                        {{ room.sport }}
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ room.name }}</h5>
+                        <div class="room-info">
+                            <p class="room-detail">
+                                <i class="bi bi-calendar3 me-2"></i>
+                                <span>{{ room.date.strftime('%d/%m/%Y') }}</span>
+                            </p>
+                            <p class="room-detail">
+                                <i class="bi bi-clock me-2"></i>
+                                <span>{{ room.date.strftime('%H:%M') }}</span>
+                            </p>
+                            <p class="room-detail">
+                                <i class="bi bi-people me-2"></i>
+                                <span>{{ room.get_active_participants()|length }}/{{ room.max_participants }}</span>
+                            </p>
+                            <p class="room-detail">
+                                <i class="bi bi-person me-2"></i>
+                                <span>{{ room.creator.name }}</span>
+                            </p>
+                        </div>
+                        <div class="d-grid gap-2 mt-3">
+                            <a href="{{ url_for('room.view_room', link_code=room.link_code) }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-eye"></i> Ver detalhes
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <span class="badge bg-secondary">Encerrado</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<!-- Como funciona -->
+<div class="how-it-works mt-5 mb-5" data-aos="fade-up">
+    <h2 class="section-title mb-4">
+        <i class="bi bi-question-circle me-2"></i>Como funciona
+    </h2>
+    <div class="row g-4">
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="100">
+            <div class="card h-100 how-card">
+                <div class="card-body text-center">
+                    <div class="how-icon mb-3">
+                        <i class="bi bi-plus-circle"></i>
+                    </div>
+                    <h5 class="card-title">Crie uma sala</h5>
+                    <p class="card-text">Defina esporte, data, horário e número de participantes.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="200">
+            <div class="card h-100 how-card">
+                <div class="card-body text-center">
+                    <div class="how-icon mb-3">
+                        <i class="bi bi-share"></i>
+                    </div>
+                    <h5 class="card-title">Compartilhe o link</h5>
+                    <p class="card-text">Envie o convite para seus amigos participarem.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="300">
+            <div class="card h-100 how-card">
+                <div class="card-body text-center">
+                    <div class="how-icon mb-3">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <h5 class="card-title">Gerencie participantes</h5>
+                    <p class="card-text">Acompanhe quem confirmou presença e gerencie a lista.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" data-aos="fade-up" data-aos-delay="400">
+            <div class="card h-100 how-card">
+                <div class="card-body text-center">
+                    <div class="how-icon mb-3">
+                        <i class="bi bi-controller"></i>
+                    </div>
+                    <h5 class="card-title">Jogue!</h5>
+                    <p class="card-text">Aproveite seu jogo com a organização perfeita.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    .hero-section {
+        min-height: 350px;
+        margin-top: 30px;
+    }
+    
+    .hero-icon {
+        font-size: 8rem;
+        color: var(--secondary);
+    }
+    
+    .search-card {
+        border-radius: 50px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .search-form {
+        margin-bottom: 0;
+    }
+    
+    .section-title {
+        margin-top: 40px;
+        color: var(--primary);
+        font-weight: 700;
+    }
+    
+    .room-info {
+        margin-bottom: 15px;
+    }
+    
+    .room-detail {
+        margin-bottom: 5px;
+        color: var(--gray-dark);
+        display: flex;
+        align-items: center;
+    }
+    
+    .room-detail i {
+        min-width: 20px;
+    }
+    
+    .past-room {
+        opacity: 0.8;
+    }
+    
+    .how-icon {
+        font-size: 2.5rem;
+        color: var(--secondary);
+        background-color: rgba(52, 152, 219, 0.1);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+    
+    .how-card {
+        transition: all 0.3s ease;
+    }
+    
+    .how-card:hover {
+        transform: translateY(-10px);
+    }
+</style>
+{% endblock %} 
