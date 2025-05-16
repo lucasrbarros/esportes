@@ -49,25 +49,26 @@ def view_room(link_code):
     
     # Verificar se o usuário está participando
     is_participating = False
+    is_in_waiting_list = False
+    user_participation = None
+    
     if current_user.is_authenticated:
-        is_participating = current_user.is_participating(room.id)
+        user_participation = current_user.get_participation(room.id)
+        is_participating = user_participation is not None
+        if is_participating:
+            is_in_waiting_list = user_participation.is_in_waiting_list()
     
     # Verificar se o usuário é o organizador
     is_owner = current_user.is_authenticated and room.creator_id == current_user.id
     
-    # Verificar permissão para acessar sala privada
-    if room.is_private and not is_owner and not is_participating:
-        if not current_user.is_authenticated:
-            flash('Esta é uma sala privada. Faça login para acessá-la.', 'warning')
-            return redirect(url_for('auth.login', next=request.url))
-        else:
-            flash('Esta é uma sala privada. Apenas o organizador e os participantes podem acessá-la.', 'warning')
-            return redirect(url_for('main.index'))
+    # Qualquer pessoa com o link pode acessar a sala, mesmo que seja privada
     
     return render_template('view_room.html', 
                           room=room, 
                           is_owner=is_owner,
-                          is_participating=is_participating)
+                          is_participating=is_participating,
+                          is_in_waiting_list=is_in_waiting_list,
+                          user_participation=user_participation)
 
 @room_bp.route('/<link_code>/participar')
 @login_required
@@ -106,7 +107,7 @@ def join_room(link_code):
     db.session.commit()
     
     if room.is_full():
-        flash('Você foi adicionado à lista de espera!', 'info')
+        flash('Você foi adicionado à lista de espera! Atenção: participantes na lista de espera não estão garantidos no jogo.', 'warning')
     else:
         flash('Você foi adicionado à lista de participantes!', 'success')
         

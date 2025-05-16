@@ -32,7 +32,7 @@
                             <span class="badge bg-secondary">
                                 <i class="bi bi-lock-fill me-1"></i>Privada
                             </span>
-                            <small class="text-muted ms-2">Apenas convidados podem ver esta sala</small>
+                            <small class="text-muted ms-2">Esta sala só é acessível por link direto</small>
                         {% else %}
                             <span class="badge bg-info">
                                 <i class="bi bi-globe me-1"></i>Pública
@@ -137,6 +137,9 @@
 
                     {% if room.get_waiting_list() %}
                         <h6>Lista de Espera ({{ room.get_waiting_list()|length }})</h6>
+                        <div class="alert alert-warning mb-2">
+                            <small><i class="bi bi-exclamation-triangle me-1"></i>Participantes na lista de espera não estão garantidos no jogo.</small>
+                        </div>
                         <div class="participant-list waiting-list">
                             {% for participant in room.get_waiting_list() %}
                                 <div class="participant-item">
@@ -171,6 +174,11 @@
         {% elif room.is_full() and not is_participating %}
             <div class="alert alert-info">
                 <i class="bi bi-info-circle"></i> Esta sala está cheia. Se você se inscrever, será adicionado à lista de espera.
+            </div>
+        {% elif is_in_waiting_list %}
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle"></i> <strong>Atenção:</strong> Você está na lista de espera e não tem vaga garantida no jogo.
+                <p class="mb-0 mt-1"><small>Sua posição na lista: {{ room.get_waiting_list().index(user_participation) + 1 }} de {{ room.get_waiting_list()|length }}</small></p>
             </div>
         {% endif %}
     </div>

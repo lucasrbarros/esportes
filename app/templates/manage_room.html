@@ -114,6 +114,9 @@
 
                     {% if room.get_waiting_list() %}
                         <h6>Lista de Espera ({{ room.get_waiting_list()|length }})</h6>
+                        <div class="alert alert-warning mb-2">
+                            <small><i class="bi bi-exclamation-triangle me-1"></i>Participantes na lista de espera não estão garantidos no jogo.</small>
+                        </div>
                         <div class="participant-list waiting-list">
                             {% for participant in room.get_waiting_list() %}
                                 <div class="participant-item">

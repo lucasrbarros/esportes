@@ -106,4 +106,15 @@ class Participant(db.Model):
     
     def __init__(self, user_id, room_id):
         self.user_id = user_id
-        self.room_id = room_id 
+        self.room_id = room_id
+        
+    def is_in_waiting_list(self):
+        """Verifica se o participante está na lista de espera"""
+        if not self.is_active:
+            return False
+        
+        room = self.room
+        active_participants = room.get_active_participants()
+        participant_index = active_participants.index(self) if self in active_participants else -1
+        
+        return participant_index >= room.max_participants 

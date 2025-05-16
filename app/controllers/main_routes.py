@@ -15,19 +15,16 @@ def index():
     # Filtrar por esporte se especificado
     sport_filter = request.args.get('sport')
     
-    # Obter todas as salas ativas
+    # Obter todas as salas ativas e públicas
     if sport_filter:
         rooms_query = Room.query.filter(Room.is_active == True, 
+                               Room.is_private == False,
                                Room.sport.ilike(f'%{sport_filter}%'))
     else:
-        rooms_query = Room.query.filter_by(is_active=True)
+        rooms_query = Room.query.filter_by(is_active=True, is_private=False)
     
-    # Filtrar salas privadas (mostrar apenas as públicas ou as privadas criadas pelo usuário atual)
-    if current_user.is_authenticated:
-        rooms = rooms_query.filter((Room.is_private == False) | 
-                                  (Room.is_private == True) & (Room.creator_id == current_user.id)).order_by(Room.date).all()
-    else:
-        rooms = rooms_query.filter_by(is_private=False).order_by(Room.date).all()
+    # Mostrar apenas salas públicas para todos os usuários
+    rooms = rooms_query.order_by(Room.date).all()
     
     # Separar salas em próximas e passadas
     now = datetime.utcnow()
