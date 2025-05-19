@@ -1,0 +1,1099 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<!-- FullCalendar CSS -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<style>
+    :root {
+        --primary-color: #ff6b00;
+        --primary-hover: #e05a00;
+        --secondary-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --border-color: #e9ecef;
+        --text-color: #2c3e50;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --danger-color: #dc3545;
+    }
+
+    .fc-event {
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 2px 4px;
+        margin: 1px 0;
+        font-size: 0.9em;
+    }
+
+    .fc-event-title {
+        font-weight: 500;
+    }
+
+    .fc-event-time {
+        font-size: 0.85em;
+    }
+
+    .fc-toolbar-title {
+        font-size: 1.5em !important;
+        font-weight: 600 !important;
+        color: var(--text-color);
+    }
+
+    .fc-button {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+    }
+
+    .fc-button:hover {
+        background-color: var(--primary-hover) !important;
+        border-color: var(--primary-hover) !important;
+    }
+
+    .fc-button-active {
+        background-color: var(--primary-hover) !important;
+        border-color: var(--primary-hover) !important;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        background-color: var(--light-gray);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 8px 8px 0 0;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-control, .form-select {
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 0, 0.25);
+    }
+
+    .btn {
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+
+    .btn-info {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #1a252f;
+        border-color: #1a252f;
+        color: white;
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-outline-success {
+        color: var(--success-color);
+        border-color: var(--success-color);
+    }
+
+    .btn-outline-success:hover {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+        color: white;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table thead th {
+        background-color: var(--light-gray);
+        color: var(--text-color);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table tbody tr:hover {
+        background-color: var(--light-gray);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: var(--text-color);
+        font-size: 0.95rem;
+    }
+
+    .badge {
+        padding: 0.6em 1em;
+        font-weight: 500;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge.bg-success {
+        background-color: var(--success-color) !important;
+        color: white;
+    }
+
+    .badge.bg-warning {
+        background-color: var(--warning-color) !important;
+        color: var(--text-color);
+    }
+
+    .badge.bg-danger {
+        background-color: var(--danger-color) !important;
+        color: white;
+    }
+
+    .badge.bg-secondary {
+        background-color: var(--secondary-color) !important;
+        color: white;
+    }
+
+    .status-indicator.success {
+        background-color: var(--success-color);
+    }
+
+    .status-indicator.warning {
+        background-color: var(--warning-color);
+    }
+
+    .status-indicator.danger {
+        background-color: var(--danger-color);
+    }
+
+    .status-indicator.secondary {
+        background-color: var(--secondary-color);
+    }
+
+    .text-primary {
+        color: var(--primary-color) !important;
+    }
+
+    .avatar-circle {
+        width: 32px;
+        height: 32px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .fc-toolbar-title {
+        font-size: 1.5em !important;
+        font-weight: 600 !important;
+    }
+
+    .fc-button {
+        background-color: #4a90e2 !important;
+        border-color: #4a90e2 !important;
+    }
+
+    .fc-button:hover {
+        background-color: #357abd !important;
+        border-color: #357abd !important;
+    }
+
+    .fc-button-active {
+        background-color: #357abd !important;
+        border-color: #357abd !important;
+    }
+
+    .modal-content {
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e9ecef;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .form-control, .form-select {
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    }
+
+    .btn {
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background-color: #4a90e2;
+        border-color: #4a90e2;
+    }
+
+    .btn-primary:hover {
+        background-color: #357abd;
+        border-color: #357abd;
+    }
+
+    .btn-danger {
+        background-color: #e74c3c;
+        border-color: #e74c3c;
+    }
+
+    .btn-danger:hover {
+        background-color: #c0392b;
+        border-color: #c0392b;
+    }
+
+    .btn-info {
+        background-color: #3498db;
+        border-color: #3498db;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background-color: #2980b9;
+        border-color: #2980b9;
+        color: white;
+    }
+
+    .table {
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .badge {
+        padding: 0.5em 0.75em;
+        font-weight: 500;
+    }
+
+    .badge.bg-success {
+        background-color: #2ecc71 !important;
+    }
+
+    .badge.bg-warning {
+        background-color: #f1c40f !important;
+    }
+
+    .badge.bg-danger {
+        background-color: #e74c3c !important;
+    }
+
+    .badge.bg-secondary {
+        background-color: #95a5a6 !important;
+    }
+
+    .filters-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .calendar-container {
+        background-color: white;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Novos estilos para a tabela */
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #2c3e50;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid #e9ecef;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: #2c3e50;
+        font-size: 0.95rem;
+    }
+
+    .table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Estilização dos badges */
+    .badge {
+        padding: 0.6em 1em;
+        font-weight: 500;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge.bg-success {
+        background-color: #2ecc71 !important;
+        color: white;
+    }
+
+    .badge.bg-warning {
+        background-color: #f1c40f !important;
+        color: #2c3e50;
+    }
+
+    .badge.bg-danger {
+        background-color: #e74c3c !important;
+        color: white;
+    }
+
+    .badge.bg-secondary {
+        background-color: #95a5a6 !important;
+        color: white;
+    }
+
+    /* Estilização dos botões de ação */
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .btn-action {
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-action i {
+        font-size: 1rem;
+    }
+
+    /* Estilização do cabeçalho da tabela */
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .table-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    /* Estilização do status do participante */
+    .participant-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .status-indicator.success {
+        background-color: #2ecc71;
+    }
+
+    .status-indicator.warning {
+        background-color: #f1c40f;
+    }
+
+    .status-indicator.danger {
+        background-color: #e74c3c;
+    }
+
+    .status-indicator.secondary {
+        background-color: #95a5a6;
+    }
+
+    /* Estilização do modal de participantes */
+    .participants-modal .modal-content {
+        border-radius: 12px;
+    }
+
+    .participants-modal .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+        padding: 1.5rem;
+    }
+
+    .participants-modal .modal-body {
+        padding: 1.5rem;
+    }
+
+    .participants-modal .modal-footer {
+        padding: 1.5rem;
+        border-top: 2px solid #e9ecef;
+    }
+
+    /* Estilização do scrollbar */
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+    /* Animações */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .table tbody tr {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .table-header {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .table-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .table thead th {
+            white-space: nowrap;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-primary mb-4">Gerenciamento de Quadras</h2>
+        </div>
+    </div>
+    
+    <!-- Filtros -->
+    <div class="filters-section">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <select class="form-select" id="sportFilter">
+                    <option value="">Todos os Esportes</option>
+                    <option value="Futebol">Futebol</option>
+                    <option value="Vôlei">Vôlei</option>
+                    <option value="Basquete">Basquete</option>
+                    <option value="Tênis">Tênis</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" id="dateFilter">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary me-2" id="btnFiltrar">
+                    <i class="fas fa-filter me-2"></i>Filtrar
+                </button>
+                <button class="btn btn-secondary" id="btnLimpar">
+                    <i class="fas fa-times me-2"></i>Limpar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendário -->
+    <div class="calendar-container">
+        <div id="calendar"></div>
+    </div>
+
+    <!-- Modal para Adicionar/Editar Quadra -->
+    <div class="modal fade" id="roomModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gerenciar Quadra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="roomForm">
+                        <input type="hidden" id="roomId">
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Esporte</label>
+                            <select class="form-select" id="sport" required>
+                                <option value="Futebol">Futebol</option>
+                                <option value="Vôlei">Vôlei</option>
+                                <option value="Basquete">Basquete</option>
+                                <option value="Tênis">Tênis</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data e Hora</label>
+                            <input type="datetime-local" class="form-control" id="date" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Máximo de Participantes</label>
+                            <input type="number" class="form-control" id="maxParticipants" required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Valor por Participante</label>
+                            <input type="number" class="form-control" id="valor" required min="0" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Localização</label>
+                            <input type="text" class="form-control" id="location">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cidade</label>
+                            <input type="text" class="form-control" id="city" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea class="form-control" id="description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isPrivate">
+                                <label class="form-check-label">Quadra Privada</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isActive" checked>
+                                <label class="form-check-label">Quadra Ativa</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnExcluir">Excluir</button>
+                    <button type="button" class="btn btn-primary" id="btnSalvar">Salvar</button>
+                    <button type="button" class="btn btn-info" id="btnGerenciarParticipantes">
+                        <i class="fas fa-users me-2"></i>Gerenciar Participantes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gerenciar Participantes -->
+    <div class="modal fade participants-modal" id="participantsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-users me-2"></i>
+                        Gerenciar Participantes
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h6 class="table-title">Lista de Participantes</h6>
+                            <div class="table-actions">
+                                <button class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-download me-2"></i>Exportar
+                                </button>
+                                <button class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-print me-2"></i>Imprimir
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Pagamento</th>
+                                        <th>Check-in</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="participantsList">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Participante -->
+    <div class="modal fade" id="participantModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Participante</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="participantForm">
+                        <input type="hidden" id="participantId">
+                        <input type="hidden" id="participantRoomId">
+                        <div class="mb-3">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="participantName" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="participantEmail" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status de Pagamento</label>
+                            <select class="form-select" id="pagamentoStatus">
+                                <option value="pendente">Pendente</option>
+                                <option value="pago">Pago</option>
+                                <option value="cancelado">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pagamento</label>
+                            <input type="text" class="form-control" id="pagamentoMetodo">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="participantCheckedIn">
+                                <label class="form-check-label">Check-in Realizado</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-control" id="participantObservacoes"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="btnRemoverParticipant">Remover</button>
+                    <button type="button" class="btn btn-primary" id="btnSalvarParticipant">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- FullCalendar JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        locale: 'pt-br',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        slotMinTime: '06:00:00',
+        slotMaxTime: '22:00:00',
+        events: '/admin/api/rooms',
+        editable: true,
+        selectable: true,
+        selectMirror: true,
+        dayMaxEvents: true,
+        select: function(info) {
+            abrirModalNovaQuadra(info.start);
+        },
+        eventClick: function(info) {
+            abrirModalEditarQuadra(info.event);
+        }
+    });
+    calendar.render();
+
+    // Funções auxiliares
+    function abrirModalNovaQuadra(start) {
+        document.getElementById('roomId').value = '';
+        document.getElementById('date').value = start.toISOString().slice(0, 16);
+        document.getElementById('btnExcluir').style.display = 'none';
+        document.getElementById('btnGerenciarParticipantes').style.display = 'none';
+        new bootstrap.Modal(document.getElementById('roomModal')).show();
+    }
+
+    function abrirModalEditarQuadra(event) {
+        document.getElementById('roomId').value = event.id;
+        document.getElementById('name').value = event.title.split(' - ')[0];
+        document.getElementById('sport').value = event.extendedProps.sport;
+        document.getElementById('date').value = event.start.toISOString().slice(0, 16);
+        document.getElementById('maxParticipants').value = event.extendedProps.max_participants;
+        document.getElementById('valor').value = event.extendedProps.valor;
+        document.getElementById('location').value = event.extendedProps.location || '';
+        document.getElementById('city').value = event.extendedProps.city;
+        document.getElementById('description').value = event.extendedProps.description || '';
+        document.getElementById('isPrivate').checked = event.extendedProps.is_private;
+        document.getElementById('isActive').checked = event.extendedProps.is_active;
+        document.getElementById('btnExcluir').style.display = 'inline-block';
+        document.getElementById('btnGerenciarParticipantes').style.display = 'inline-block';
+        new bootstrap.Modal(document.getElementById('roomModal')).show();
+    }
+
+    function carregarParticipantes(roomId) {
+        fetch(`/admin/api/rooms/${roomId}/participants`)
+            .then(response => response.json())
+            .then(participants => {
+                const tbody = document.getElementById('participantsList');
+                tbody.innerHTML = '';
+                
+                participants.forEach(p => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle me-2">
+                                    <span>${p.user_name.charAt(0).toUpperCase()}</span>
+                                </div>
+                                ${p.user_name}
+                            </div>
+                        </td>
+                        <td>${p.user_email}</td>
+                        <td>
+                            <div class="participant-status">
+                                <span class="status-indicator ${p.is_in_waiting_list ? 'warning' : 'success'}"></span>
+                                <span class="badge ${p.is_in_waiting_list ? 'bg-warning' : 'bg-success'}">
+                                    ${p.is_in_waiting_list ? 'Lista de Espera' : 'Confirmado'}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="participant-status">
+                                <span class="status-indicator ${p.pagamento_status === 'pago' ? 'success' : p.pagamento_status === 'cancelado' ? 'danger' : 'warning'}"></span>
+                                <span class="badge ${p.pagamento_status === 'pago' ? 'bg-success' : p.pagamento_status === 'cancelado' ? 'bg-danger' : 'bg-warning'}">
+                                    ${p.pagamento_status}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="participant-status">
+                                <span class="status-indicator ${p.checked_in ? 'success' : 'secondary'}"></span>
+                                <span class="badge ${p.checked_in ? 'bg-success' : 'bg-secondary'}">
+                                    ${p.checked_in ? 'Sim' : 'Não'}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-action btn-primary" onclick="editarParticipante(${p.id}, ${roomId})" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-action btn-info" onclick="verDetalhes(${p.id})" title="Ver Detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Erro:', error));
+    }
+
+    function editarParticipante(participantId, roomId) {
+        fetch(`/admin/api/rooms/${roomId}/participants`)
+            .then(response => response.json())
+            .then(participants => {
+                const participant = participants.find(p => p.id === participantId);
+                if (participant) {
+                    document.getElementById('participantId').value = participant.id;
+                    document.getElementById('participantRoomId').value = roomId;
+                    document.getElementById('participantName').value = participant.user_name;
+                    document.getElementById('participantEmail').value = participant.user_email;
+                    document.getElementById('pagamentoStatus').value = participant.pagamento_status;
+                    document.getElementById('pagamentoMetodo').value = participant.pagamento_metodo || '';
+                    document.getElementById('participantCheckedIn').checked = participant.checked_in;
+                    document.getElementById('participantObservacoes').value = participant.observacoes || '';
+                    
+                    new bootstrap.Modal(document.getElementById('participantModal')).show();
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+    }
+
+    // Event Listeners
+    document.getElementById('btnSalvar').addEventListener('click', function() {
+        const formData = {
+            id: document.getElementById('roomId').value,
+            name: document.getElementById('name').value,
+            sport: document.getElementById('sport').value,
+            date: document.getElementById('date').value,
+            max_participants: document.getElementById('maxParticipants').value,
+            valor: document.getElementById('valor').value,
+            location: document.getElementById('location').value,
+            city: document.getElementById('city').value,
+            description: document.getElementById('description').value,
+            is_private: document.getElementById('isPrivate').checked,
+            is_active: document.getElementById('isActive').checked
+        };
+
+        fetch('/admin/api/rooms', {
+            method: formData.id ? 'PUT' : 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            calendar.refetchEvents();
+            bootstrap.Modal.getInstance(document.getElementById('roomModal')).hide();
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+
+    document.getElementById('btnExcluir').addEventListener('click', function() {
+        const id = document.getElementById('roomId').value;
+        if (confirm('Tem certeza que deseja excluir esta quadra?')) {
+            fetch(`/admin/api/rooms/${id}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                calendar.refetchEvents();
+                bootstrap.Modal.getInstance(document.getElementById('roomModal')).hide();
+            })
+            .catch(error => console.error('Erro:', error));
+        }
+    });
+
+    document.getElementById('btnGerenciarParticipantes').addEventListener('click', function() {
+        const roomId = document.getElementById('roomId').value;
+        carregarParticipantes(roomId);
+        bootstrap.Modal.getInstance(document.getElementById('roomModal')).hide();
+        new bootstrap.Modal(document.getElementById('participantsModal')).show();
+    });
+
+    document.getElementById('btnSalvarParticipant').addEventListener('click', function() {
+        const participantId = document.getElementById('participantId').value;
+        const roomId = document.getElementById('participantRoomId').value;
+        
+        const formData = {
+            is_active: true,
+            checked_in: document.getElementById('participantCheckedIn').checked,
+            pagamento_status: document.getElementById('pagamentoStatus').value,
+            pagamento_metodo: document.getElementById('pagamentoMetodo').value,
+            observacoes: document.getElementById('participantObservacoes').value
+        };
+
+        fetch(`/admin/api/rooms/${roomId}/participants/${participantId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            carregarParticipantes(roomId);
+            bootstrap.Modal.getInstance(document.getElementById('participantModal')).hide();
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+
+    document.getElementById('btnRemoverParticipant').addEventListener('click', function() {
+        const participantId = document.getElementById('participantId').value;
+        const roomId = document.getElementById('participantRoomId').value;
+        
+        if (confirm('Tem certeza que deseja remover este participante?')) {
+            fetch(`/admin/api/rooms/${roomId}/participants/${participantId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                carregarParticipantes(roomId);
+                bootstrap.Modal.getInstance(document.getElementById('participantModal')).hide();
+            })
+            .catch(error => console.error('Erro:', error));
+        }
+    });
+
+    document.getElementById('btnFiltrar').addEventListener('click', function() {
+        const sport = document.getElementById('sportFilter').value;
+        const date = document.getElementById('dateFilter').value;
+        calendar.refetchEvents({
+            sport: sport,
+            date: date
+        });
+    });
+
+    document.getElementById('btnLimpar').addEventListener('click', function() {
+        document.getElementById('sportFilter').value = '';
+        document.getElementById('dateFilter').value = '';
+        calendar.refetchEvents();
+    });
+
+    // Expor função para o onclick do botão de editar participante
+    window.editarParticipante = editarParticipante;
+});
+</script>
+{% endblock %} 

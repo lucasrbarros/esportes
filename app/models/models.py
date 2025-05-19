@@ -59,11 +59,12 @@ class Room(db.Model):
     is_private = db.Column(db.Boolean, default=False)
     location = db.Column(db.String(200), nullable=True)
     city = db.Column(db.String(100), nullable=False)
+    valor = db.Column(db.Float, nullable=False, default=0.0)  # Valor por participante
     
     # Relacionamento com os participantes
     participants = db.relationship('Participant', backref='room', lazy=True)
     
-    def __init__(self, name, sport, date, max_participants, creator_id, description=None, is_private=False, location=None, city=None):
+    def __init__(self, name, sport, date, max_participants, creator_id, description=None, is_private=False, location=None, city=None, valor=0.0):
         self.name = name
         self.sport = sport
         self.date = date
@@ -73,6 +74,7 @@ class Room(db.Model):
         self.is_private = is_private
         self.location = location
         self.city = city or "Não informada"
+        self.valor = valor
         self.link_code = secrets.token_urlsafe(6)  # Gera um código único para o link
     
     def is_full(self):
@@ -105,6 +107,10 @@ class Participant(db.Model):
     registered_at = db.Column(db.DateTime, default=datetime.utcnow)
     is_active = db.Column(db.Boolean, default=True)
     checked_in = db.Column(db.Boolean, default=False)
+    pagamento_status = db.Column(db.String(20), default='pendente')  # pendente, pago, cancelado
+    pagamento_data = db.Column(db.DateTime, nullable=True)
+    pagamento_metodo = db.Column(db.String(50), nullable=True)
+    observacoes = db.Column(db.Text, nullable=True)
     
     def __init__(self, user_id, room_id):
         self.user_id = user_id

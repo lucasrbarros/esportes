@@ -1,43 +1,33 @@
 from app import create_app, db
 from app.models.models import User, Room, Participant
+from app.models.sala import Sala
 
-# Criar a aplicação
-app = create_app()
+def init_db():
+    app = create_app()
+    with app.app_context():
+        # Cria todas as tabelas
+        db.create_all()
+        
+        # Verifica se já existem salas
+        if Sala.query.count() == 0:
+            # Cria algumas salas de exemplo
+            salas = [
+                Sala(nome='Sala de Reunião 1', capacidade=10, descricao='Sala de reunião pequena'),
+                Sala(nome='Sala de Reunião 2', capacidade=20, descricao='Sala de reunião média'),
+                Sala(nome='Auditório', capacidade=50, descricao='Auditório para eventos maiores'),
+                Sala(nome='Sala de Treinamento', capacidade=30, descricao='Sala para treinamentos'),
+                Sala(nome='Sala de Conferência', capacidade=15, descricao='Sala para videoconferências')
+            ]
+            
+            # Adiciona as salas ao banco de dados
+            for sala in salas:
+                db.session.add(sala)
+            
+            # Commit das alterações
+            db.session.commit()
+            print("Banco de dados inicializado com sucesso!")
+        else:
+            print("O banco de dados já contém salas.")
 
-# Criar o contexto da aplicação
-with app.app_context():
-    # Remover todas as tabelas existentes
-    db.drop_all()
-    
-    # Criar todas as tabelas
-    db.create_all()
-    
-    # Criar um usuário administrador
-    admin = User(
-        username='admin',
-        email='admin@example.com',
-        name='Administrador',
-        password='admin123'
-    )
-    
-    # Adicionar o usuário ao banco de dados
-    db.session.add(admin)
-    
-    # Criar um usuário normal
-    user = User(
-        username='usuario',
-        email='usuario@example.com',
-        name='Usuário Teste',
-        password='usuario123'
-    )
-    
-    # Adicionar o usuário ao banco de dados
-    db.session.add(user)
-    
-    # Confirmar as alterações
-    db.session.commit()
-    
-    print('Banco de dados inicializado com sucesso!')
-    print('Usuários criados:')
-    print('- Admin: admin / admin123')
-    print('- Usuário: usuario / usuario123') 
+if __name__ == '__main__':
+    init_db() 
