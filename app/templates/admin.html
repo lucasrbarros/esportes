@@ -5,47 +5,112 @@
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
 <style>
     :root {
-        --primary-color: #ff6b00;
-        --primary-hover: #e05a00;
-        --secondary-color: #2c3e50;
-        --light-gray: #f8f9fa;
-        --border-color: #e9ecef;
-        --text-color: #2c3e50;
-        --success-color: #28a745;
-        --warning-color: #ffc107;
-        --danger-color: #dc3545;
+        --primary-color: #FF6A3D;        /* Laranja principal */
+        --primary-hover: #E05A00;        /* Laranja escuro para hover */
+        --secondary-color: #1A2238;      /* Azul escuro profundo */
+        --secondary-light: #2D3A5C;      /* Azul escuro mais claro */
+        --light-gray: #F4F7F9;           /* Cinza muito claro */
+        --border-color: #DFE3E8;         /* Cinza claro para bordas */
+        --text-color: #333333;           /* Cinza escuro para texto */
+        --success-color: #38B000;        /* Verde */
+        --warning-color: #FFBD00;        /* Amarelo */
+        --danger-color: #F71735;         /* Vermelho */
+        --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        --box-shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+        --transition: all 0.3s ease;
+        --border-radius: 8px;
+        --border-radius-lg: 12px;
     }
 
+    body {
+        background-color: #F8F9FA;
+        color: var(--text-color);
+    }
+
+    /* Estilo do cabeçalho */
+    nav.navbar {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-light) 100%) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        color: white !important;
+    }
+
+    .content-wrapper {
+        padding-top: 30px;
+        padding-bottom: 40px;
+    }
+
+    h2.text-primary {
+        color: var(--primary-color) !important;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+    h2.text-primary:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 4px;
+        width: 60px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    /* Estilo dos eventos do calendário */
     .fc-event {
         cursor: pointer;
-        border-radius: 4px;
-        padding: 2px 4px;
+        border-radius: var(--border-radius);
+        padding: 4px 8px;
         margin: 1px 0;
         font-size: 0.9em;
+        border: none !important;
+        background-color: var(--secondary-color) !important;
+        transition: var(--transition);
+    }
+
+    .fc-event:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--box-shadow);
     }
 
     .fc-event-title {
-        font-weight: 500;
+        font-weight: 600;
     }
 
     .fc-event-time {
         font-size: 0.85em;
+        opacity: 0.9;
     }
 
+    /* Estilo da barra de ferramentas do calendário */
     .fc-toolbar-title {
-        font-size: 1.5em !important;
-        font-weight: 600 !important;
-        color: var(--text-color);
+        font-size: 1.6em !important;
+        font-weight: 700 !important;
+        color: var(--secondary-color);
     }
 
     .fc-button {
         background-color: var(--primary-color) !important;
         border-color: var(--primary-color) !important;
+        border-radius: 25px !important;
+        padding: 8px 16px !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        font-size: 0.9em !important;
+        box-shadow: var(--box-shadow) !important;
+        transition: var(--transition) !important;
     }
 
     .fc-button:hover {
         background-color: var(--primary-hover) !important;
         border-color: var(--primary-hover) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: var(--box-shadow-hover) !important;
     }
 
     .fc-button-active {
@@ -53,42 +118,131 @@
         border-color: var(--primary-hover) !important;
     }
 
+    /* Estilo dos dias no calendário */
+    .fc-day-today {
+        background-color: rgba(255, 106, 61, 0.1) !important;
+    }
+
+    .fc th {
+        padding: 10px 0 !important;
+        font-weight: 600 !important;
+    }
+
+    .fc-col-header-cell-cushion {
+        color: var(--secondary-color) !important;
+        text-decoration: none !important;
+        text-transform: uppercase;
+        font-size: 0.85em;
+        letter-spacing: 1px;
+    }
+
+    .fc-daygrid-day-number {
+        color: var(--text-color) !important;
+        text-decoration: none !important;
+        font-weight: 500;
+    }
+
+    /* Estilo dos modais */
     .modal-content {
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--box-shadow);
+        border: none;
+        overflow: hidden;
     }
 
     .modal-header {
-        background-color: var(--light-gray);
-        border-bottom: 1px solid var(--border-color);
-        border-radius: 8px 8px 0 0;
+        background-color: var(--secondary-color);
+        border-bottom: none;
+        padding: 1.5rem;
+        border-radius: 0;
     }
 
     .modal-title {
-        font-weight: 600;
-        color: var(--text-color);
+        font-weight: 700;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
+    .modal-title i {
+        color: var(--primary-color);
+    }
+
+    .modal-body {
+        padding: 1.8rem;
+    }
+
+    .modal-footer {
+        background-color: var(--light-gray);
+        border-top: 1px solid var(--border-color);
+        padding: 1.2rem 1.8rem;
+    }
+
+    .btn-close {
+        color: white;
+        background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23fff'%3e%3cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+        opacity: 0.8;
+    }
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+    /* Estilo dos formulários */
     .form-label {
-        font-weight: 500;
-        color: var(--text-color);
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
     }
 
     .form-control, .form-select {
-        border-radius: 4px;
+        border-radius: var(--border-radius);
         border: 1px solid var(--border-color);
-        padding: 0.5rem 0.75rem;
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+        color: var(--text-color);
+        background-color: white;
+        transition: var(--transition);
     }
 
     .form-control:focus, .form-select:focus {
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 0.2rem rgba(255, 107, 0, 0.25);
+        box-shadow: 0 0 0 0.2rem rgba(255, 106, 61, 0.25);
     }
 
-    .btn {
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
+    .form-check-input {
+        width: 1.2em;
+        height: 1.2em;
+        margin-top: 0.15em;
+    }
+
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .form-check-label {
+        margin-left: 0.5rem;
         font-weight: 500;
+    }
+
+    /* Estilo dos botões */
+    .btn {
+        border-radius: 25px;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        box-shadow: var(--box-shadow);
+        transition: var(--transition);
+        border: none;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--box-shadow-hover);
     }
 
     .btn-primary {
@@ -101,14 +255,24 @@
         border-color: var(--primary-hover);
     }
 
+    .btn-secondary {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--secondary-light);
+        border-color: var(--secondary-light);
+    }
+
     .btn-danger {
         background-color: var(--danger-color);
         border-color: var(--danger-color);
     }
 
     .btn-danger:hover {
-        background-color: #c82333;
-        border-color: #bd2130;
+        background-color: #d31525;
+        border-color: #d31525;
     }
 
     .btn-info {
@@ -118,14 +282,15 @@
     }
 
     .btn-info:hover {
-        background-color: #1a252f;
-        border-color: #1a252f;
+        background-color: var(--secondary-light);
+        border-color: var(--secondary-light);
         color: white;
     }
 
     .btn-outline-primary {
         color: var(--primary-color);
-        border-color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        background-color: transparent;
     }
 
     .btn-outline-primary:hover {
@@ -136,7 +301,8 @@
 
     .btn-outline-success {
         color: var(--success-color);
-        border-color: var(--success-color);
+        border: 1px solid var(--success-color);
+        background-color: transparent;
     }
 
     .btn-outline-success:hover {
@@ -377,27 +543,41 @@
     }
 
     .filters-section {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        background-color: white;
+        border-radius: var(--border-radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--box-shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .filters-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: var(--border-radius-lg) 0 0 var(--border-radius-lg);
     }
 
     .calendar-container {
         background-color: white;
-        border-radius: 8px;
-        padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        border-radius: var(--border-radius-lg);
+        padding: 1.8rem;
+        box-shadow: var(--box-shadow);
+        margin-bottom: 2rem;
     }
 
-    /* Novos estilos para a tabela */
     .table-container {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: white;
+        border-radius: var(--border-radius-lg);
+        box-shadow: var(--box-shadow);
         padding: 1.5rem;
-        margin: 1rem 0;
+        margin: 0;
+        overflow: hidden;
     }
 
     .table {
@@ -407,34 +587,34 @@
     }
 
     .table thead th {
-        background-color: #f8f9fa;
-        color: #2c3e50;
-        font-weight: 600;
+        background-color: var(--light-gray);
+        color: var(--secondary-color);
+        font-weight: 700;
         text-transform: uppercase;
         font-size: 0.85rem;
         letter-spacing: 0.5px;
-        padding: 1rem;
-        border-bottom: 2px solid #e9ecef;
+        padding: 1.2rem 1rem;
+        border-bottom: 2px solid var(--border-color);
         position: sticky;
         top: 0;
         z-index: 10;
     }
 
     .table tbody tr {
-        transition: all 0.2s ease;
-        border-bottom: 1px solid #e9ecef;
+        transition: var(--transition);
+        border-bottom: 1px solid var(--border-color);
     }
 
     .table tbody tr:hover {
-        background-color: #f8f9fa;
-        transform: translateY(-1px);
+        background-color: var(--light-gray);
+        transform: translateY(-2px);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .table tbody td {
-        padding: 1rem;
+        padding: 1.2rem 1rem;
         vertical-align: middle;
-        color: #2c3e50;
+        color: var(--text-color);
         font-size: 0.95rem;
     }
 
@@ -442,37 +622,111 @@
         border-bottom: none;
     }
 
-    /* Estilização dos badges */
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding: 0 0.5rem;
+    }
+
+    .table-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin: 0;
+        position: relative;
+        padding-left: 1rem;
+    }
+
+    .table-title::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background-color: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    .table-actions {
+        display: flex;
+        gap: 0.8rem;
+    }
+
     .badge {
         padding: 0.6em 1em;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.85rem;
-        border-radius: 6px;
+        border-radius: 15px;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
 
     .badge.bg-success {
-        background-color: #2ecc71 !important;
+        background-color: var(--success-color) !important;
         color: white;
     }
 
     .badge.bg-warning {
-        background-color: #f1c40f !important;
-        color: #2c3e50;
+        background-color: var(--warning-color) !important;
+        color: var(--secondary-color);
     }
 
     .badge.bg-danger {
-        background-color: #e74c3c !important;
+        background-color: var(--danger-color) !important;
         color: white;
     }
 
     .badge.bg-secondary {
-        background-color: #95a5a6 !important;
+        background-color: var(--secondary-color) !important;
         color: white;
     }
 
-    /* Estilização dos botões de ação */
+    .participant-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .status-indicator.success {
+        background-color: var(--success-color);
+    }
+
+    .status-indicator.warning {
+        background-color: var(--warning-color);
+    }
+
+    .status-indicator.danger {
+        background-color: var(--danger-color);
+    }
+
+    .status-indicator.secondary {
+        background-color: var(--secondary-color);
+    }
+
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: 1rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
     .action-buttons {
         display: flex;
         gap: 0.5rem;
@@ -481,116 +735,62 @@
 
     .btn-action {
         padding: 0.5rem;
-        border-radius: 6px;
-        transition: all 0.2s ease;
+        border-radius: 50%;
+        transition: var(--transition);
         display: inline-flex;
         align-items: center;
         justify-content: center;
         width: 36px;
         height: 36px;
+        background-color: var(--light-gray);
+        border: none;
     }
 
     .btn-action:hover {
         transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: var(--box-shadow);
     }
 
     .btn-action i {
         font-size: 1rem;
+        color: var(--secondary-color);
     }
 
-    /* Estilização do cabeçalho da tabela */
-    .table-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        padding: 0 1rem;
+    .btn-action.btn-primary {
+        background-color: var(--primary-color);
     }
 
-    .table-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 0;
+    .btn-action.btn-primary i {
+        color: white;
     }
 
-    .table-actions {
-        display: flex;
-        gap: 1rem;
+    .btn-action.btn-info {
+        background-color: var(--secondary-color);
     }
 
-    /* Estilização do status do participante */
-    .participant-status {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+    .btn-action.btn-info i {
+        color: white;
     }
 
-    .status-indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .status-indicator.success {
-        background-color: #2ecc71;
-    }
-
-    .status-indicator.warning {
-        background-color: #f1c40f;
-    }
-
-    .status-indicator.danger {
-        background-color: #e74c3c;
-    }
-
-    .status-indicator.secondary {
-        background-color: #95a5a6;
-    }
-
-    /* Estilização do modal de participantes */
-    .participants-modal .modal-content {
-        border-radius: 12px;
-    }
-
-    .participants-modal .modal-header {
-        background-color: #f8f9fa;
-        border-bottom: 2px solid #e9ecef;
-        padding: 1.5rem;
-    }
-
-    .participants-modal .modal-body {
-        padding: 1.5rem;
-    }
-
-    .participants-modal .modal-footer {
-        padding: 1.5rem;
-        border-top: 2px solid #e9ecef;
-    }
-
-    /* Estilização do scrollbar */
-    .table-responsive::-webkit-scrollbar {
+    ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
     }
 
-    .table-responsive::-webkit-scrollbar-track {
-        background: #f1f1f1;
+    ::-webkit-scrollbar-track {
+        background: var(--light-gray);
         border-radius: 4px;
     }
 
-    .table-responsive::-webkit-scrollbar-thumb {
-        background: #c1c1c1;
+    ::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
         border-radius: 4px;
     }
 
-    .table-responsive::-webkit-scrollbar-thumb:hover {
-        background: #a8a8a8;
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-hover);
     }
 
-    /* Animações */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
@@ -600,7 +800,6 @@
         animation: fadeIn 0.3s ease-out;
     }
 
-    /* Responsividade */
     @media (max-width: 768px) {
         .table-header {
             flex-direction: column;
@@ -616,6 +815,106 @@
         .table thead th {
             white-space: nowrap;
         }
+        
+        .fc-header-toolbar {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    /* Resumo Financeiro */
+    .info-card {
+        transition: var(--transition);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    
+    .info-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--box-shadow);
+    }
+    
+    .info-card h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    /* Tabela de participantes */
+    .table-container {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+    }
+    
+    #tabelaParticipantes {
+        margin-bottom: 0;
+    }
+    
+    #tabelaParticipantes thead th {
+        background-color: var(--secondary-color);
+        color: white;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 0.85rem 0.75rem;
+        vertical-align: middle;
+    }
+    
+    #tabelaParticipantes tbody td {
+        vertical-align: middle;
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    #tabelaParticipantes tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+    }
+    
+    #tabelaParticipantes tfoot td {
+        background-color: var(--light-gray);
+        font-weight: 600;
+        padding: 0.75rem;
+    }
+    
+    /* Badges e Status */
+    .badge {
+        font-weight: 600;
+        padding: 0.4em 0.6em;
+        border-radius: 4px;
+    }
+    
+    /* Filtros e controles de participantes */
+    .filters-section {
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    /* Modal de pagamento em lote */
+    .alert-info {
+        background-color: rgba(13, 202, 240, 0.1);
+        border-color: rgba(13, 202, 240, 0.2);
+        color: #055160;
+    }
+    
+    /* Estilo para campos de texto modificados */
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(255, 106, 61, 0.25);
+    }
+    
+    /* Estilo para checkbox */
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .form-check-input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(255, 106, 61, 0.25);
     }
 </style>
 {% endblock %}
@@ -624,15 +923,26 @@
 <div class="container mt-4">
     <div class="row mb-4">
         <div class="col-12">
-            <h2 class="text-primary mb-4">Gerenciamento de Quadras</h2>
+            <div class="d-flex align-items-center">
+                <h2 class="text-primary mb-0">Gerenciamento de Jogos</h2>
+                <div class="ms-auto">
+                    <button class="btn btn-success me-2" id="btnGerenciarQuadras">
+                        <i class="fas fa-table-tennis me-2"></i>Gerenciar Quadras
+                    </button>
+                    <button class="btn btn-primary" id="btnNovoJogo">
+                        <i class="fas fa-plus-circle me-2"></i>Novo Jogo
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
     
     <!-- Filtros -->
     <div class="filters-section">
-        <div class="row g-3">
+        <div class="row g-3 align-items-end">
             <div class="col-md-3">
-                <select class="form-select" id="sportFilter">
+                <label class="form-label small mb-1">Esporte</label>
+                <select class="form-select form-select-sm" id="sportFilter">
                     <option value="">Todos os Esportes</option>
                     <option value="Futebol">Futebol</option>
                     <option value="Vôlei">Vôlei</option>
@@ -642,14 +952,22 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <input type="date" class="form-control" id="dateFilter">
+                <label class="form-label small mb-1">Data</label>
+                <input type="date" class="form-control form-control-sm" id="dateFilter">
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary me-2" id="btnFiltrar">
-                    <i class="fas fa-filter me-2"></i>Filtrar
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-sm w-100" id="btnFiltrar">
+                    <i class="fas fa-search me-1"></i>Filtrar
                 </button>
-                <button class="btn btn-secondary" id="btnLimpar">
-                    <i class="fas fa-times me-2"></i>Limpar
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-secondary btn-sm w-100" id="btnLimpar">
+                    <i class="fas fa-times me-1"></i>Limpar
+                </button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-info btn-sm w-100" id="btnRelatorios" data-bs-toggle="modal" data-bs-target="#relatoriosModal">
+                    <i class="fas fa-chart-bar me-1"></i>Relatórios
                 </button>
             </div>
         </div>
@@ -662,20 +980,21 @@
 
     <!-- Modal para Adicionar/Editar Quadra -->
     <div class="modal fade" id="roomModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Gerenciar Quadra</h5>
+                    <h5 class="modal-title"><i class="fas fa-futbol me-2"></i>Gerenciar Jogo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="roomForm">
                         <input type="hidden" id="roomId">
-                        <div class="mb-3">
-                            <label class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="name" required>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nome do Jogo</label>
+                                <input type="text" class="form-control" id="name" required placeholder="Ex: Futebol no Parque">
                         </div>
-                        <div class="mb-3">
+                            <div class="col-md-6 mb-3">
                             <label class="form-label">Esporte</label>
                             <select class="form-select" id="sport" required>
                                 <option value="Futebol">Futebol</option>
@@ -685,93 +1004,148 @@
                                 <option value="Outros">Outros</option>
                             </select>
                         </div>
-                        <div class="mb-3">
+                            <div class="col-md-6 mb-3">
                             <label class="form-label">Data e Hora</label>
                             <input type="datetime-local" class="form-control" id="date" required>
                         </div>
-                        <div class="mb-3">
+                            <div class="col-md-6 mb-3">
                             <label class="form-label">Máximo de Participantes</label>
                             <input type="number" class="form-control" id="maxParticipants" required min="1">
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Valor por Participante</label>
-                            <input type="number" class="form-control" id="valor" required min="0" step="0.01">
+                            
+                            <div class="col-12">
+                                <hr>
+                                <h6 class="mb-3"><i class="fas fa-table-tennis me-2"></i>Dados da Quadra</h6>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Localização</label>
-                            <input type="text" class="form-control" id="location">
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Selecionar Quadra</label>
+                                <select class="form-select" id="courtId">
+                                    <option value="">Sem quadra específica</option>
+                                    <!-- Opções serão carregadas via JavaScript -->
+                                </select>
                         </div>
-                        <div class="mb-3">
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Duração (horas)</label>
+                                <input type="number" class="form-control" id="durationHours" step="0.5" min="0.5" value="1">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Quantidade de Quadras</label>
+                                <input type="number" class="form-control" id="qtdQuadras" min="1" value="1">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Valor da Quadra (R$)</label>
+                                <input type="number" class="form-control" id="valorQuadra" step="0.01" min="0" value="0">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3" id="courtInfoContainer" style="display: none;">
+                                <div class="card bg-light">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-2" id="courtInfoName">-</h6>
+                                        <div class="mb-1 small"><i class="fas fa-map-marker-alt me-1"></i> <span id="courtInfoLocation">-</span></div>
+                                        <div class="mb-1 small"><i class="fas fa-users me-1"></i> <span id="courtInfoCapacity">-</span> pessoas</div>
+                                        <div class="mb-1 small"><i class="fas fa-money-bill-wave me-1"></i> <span id="courtInfoPrice">-</span>/hora</div>
+                                        <div class="mt-2 fw-bold">Total: R$ <span id="courtInfoTotal">0.00</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Valor por Participante (R$)</label>
+                                <input type="number" class="form-control" id="valor" min="0" step="0.01">
+                                <small class="form-text text-muted" id="valorCalculadoInfo" style="display: none;">
+                                    Valor calculado: <span id="valorCalculado">R$ 0.00</span> por pessoa
+                                </small>
+                                <div class="form-check mt-2">
+                                    <input type="checkbox" class="form-check-input" id="calcularAutomatico">
+                                    <label class="form-check-label">Calcular valor automaticamente</label>
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                <hr>
+                                <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Informações Adicionais</h6>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
                             <label class="form-label">Cidade</label>
                             <input type="text" class="form-control" id="city" required>
                         </div>
-                        <div class="mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Localização</label>
+                                <input type="text" class="form-control" id="location">
+                            </div>
+                            <div class="col-md-12 mb-3">
                             <label class="form-label">Descrição</label>
-                            <textarea class="form-control" id="description"></textarea>
+                                <textarea class="form-control" id="description" rows="3"></textarea>
                         </div>
-                        <div class="mb-3">
+                            <div class="col-md-6 mb-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="isPrivate">
-                                <label class="form-check-label">Quadra Privada</label>
+                                    <label class="form-check-label">Jogo Privado</label>
                             </div>
                         </div>
-                        <div class="mb-3">
+                            <div class="col-md-6 mb-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="isActive" checked>
-                                <label class="form-check-label">Quadra Ativa</label>
+                                    <label class="form-check-label">Jogo Ativo</label>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="btnExcluir">Excluir</button>
-                    <button type="button" class="btn btn-primary" id="btnSalvar">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnExcluir">
+                        <i class="fas fa-trash me-2"></i>Excluir
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnSalvar">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
                     <button type="button" class="btn btn-info" id="btnGerenciarParticipantes">
-                        <i class="fas fa-users me-2"></i>Gerenciar Participantes
+                        <i class="fas fa-users me-2"></i>Participantes
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para Gerenciar Participantes -->
-    <div class="modal fade participants-modal" id="participantsModal" tabindex="-1">
+    <!-- Modal para Gerenciar Quadras -->
+    <div class="modal fade" id="courtsModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-users me-2"></i>
-                        Gerenciar Participantes
-                    </h5>
+                    <h5 class="modal-title"><i class="fas fa-table-tennis me-2"></i>Gerenciamento de Quadras</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="mb-4">
+                        <button class="btn btn-success" id="btnNovaCourt">
+                            <i class="fas fa-plus-circle me-2"></i>Nova Quadra
+                        </button>
+                    </div>
+                    
                     <div class="table-container">
-                        <div class="table-header">
-                            <h6 class="table-title">Lista de Participantes</h6>
-                            <div class="table-actions">
-                                <button class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-download me-2"></i>Exportar
-                                </button>
-                                <button class="btn btn-outline-success btn-sm">
-                                    <i class="fas fa-print me-2"></i>Imprimir
-                                </button>
-                            </div>
-                        </div>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table table-hover" id="tabelaQuadras">
                                 <thead>
                                     <tr>
                                         <th>Nome</th>
-                                        <th>Email</th>
+                                        <th>Esporte</th>
+                                        <th>Localização</th>
+                                        <th>Preço/Hora</th>
+                                        <th>Capacidade</th>
                                         <th>Status</th>
-                                        <th>Pagamento</th>
-                                        <th>Check-in</th>
                                         <th>Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody id="participantsList">
+                                <tbody id="courtsList">
+                                    <!-- Será preenchido via JavaScript -->
                                 </tbody>
                             </table>
                         </div>
@@ -785,55 +1159,730 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal para Adicionar/Editar Quadra -->
+    <div class="modal fade" id="courtModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-table-tennis me-2"></i>Adicionar Quadra</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="courtForm">
+                        <input type="hidden" id="courtIdField">
+                        <div class="mb-3">
+                            <label class="form-label">Nome da Quadra</label>
+                            <input type="text" class="form-control" id="courtName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Esporte</label>
+                            <select class="form-select" id="courtSportType" required>
+                                <option value="Futebol">Futebol</option>
+                                <option value="Vôlei">Vôlei</option>
+                                <option value="Basquete">Basquete</option>
+                                <option value="Tênis">Tênis</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Preço por Hora (R$)</label>
+                            <input type="number" class="form-control" id="courtPrice" step="0.01" min="0" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Capacidade Máxima</label>
+                            <input type="number" class="form-control" id="courtCapacity" min="1" value="10" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Localização</label>
+                            <input type="text" class="form-control" id="courtLocation">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descrição</label>
+                            <textarea class="form-control" id="courtDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="courtIsActive" checked>
+                            <label class="form-check-label">Quadra Ativa</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnExcluirQuadra">
+                        <i class="fas fa-trash me-2"></i>Excluir
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnSalvarQuadra">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gerenciar Participantes -->
+    <div class="modal fade participants-modal" id="participantsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-users me-2"></i>
+                        Gerenciar Participantes
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Resumo do jogo -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-futbol text-primary me-2" style="font-size: 1.5rem;"></i>
+                                        <h5 class="mb-0" id="jogoTitulo">Carregando...</h5>
+                                    </div>
+                                    <p class="text-muted mb-1" id="jogoData">Data: carregando...</p>
+                                    <p class="text-muted mb-0" id="jogoLocal">Local: carregando...</p>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="d-flex align-items-center justify-content-around mb-2">
+                                        <div class="text-center">
+                                            <h5 class="mb-1" id="jogoOcupacao">0/0</h5>
+                                            <p class="text-muted small">Ocupação</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <h5 class="mb-1" id="jogoValor">R$ 0,00</h5>
+                                            <p class="text-muted small">Valor por pessoa</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <h5 class="mb-1 text-success" id="jogoTotalArrecadado">R$ 0,00</h5>
+                                            <p class="text-muted small">Total arrecadado</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="progress mb-2" style="height: 25px;">
+                                        <div class="progress-bar bg-success" id="jogoPagosBar" style="width: 0%" role="progressbar">0%</div>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <small class="text-success"><i class="fas fa-check-circle"></i> <span id="jogoPagos">0</span> pagos</small>
+                                        <small class="text-warning"><i class="fas fa-clock"></i> <span id="jogoPendentes">0</span> pendentes</small>
+                                        <small class="text-danger"><i class="fas fa-times-circle"></i> <span id="jogoCancelados">0</span> cancelados</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resumo financeiro do jogo -->
+                    <div class="card mb-4 border-success">
+                        <div class="card-header bg-success bg-opacity-10 d-flex align-items-center">
+                            <h6 class="mb-0 text-success">
+                                <i class="fas fa-money-bill-wave me-2"></i>Resumo Financeiro
+                            </h6>
+                            <button class="btn btn-sm btn-outline-success ms-auto" id="btnExportarFinanceiro">
+                                <i class="fas fa-file-export me-1"></i>Exportar
+                                </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="info-card bg-success bg-opacity-10 p-3 rounded h-100">
+                                        <h4 class="text-success mb-0" id="jogoValorTotal">R$ 0,00</h4>
+                                        <p class="mb-0 small">Valor total previsto</p>
+                                        <small class="text-muted">Previsão com ocupação máxima</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-card bg-primary bg-opacity-10 p-3 rounded h-100">
+                                        <h4 class="text-primary mb-0" id="jogoValorConfirmado">R$ 0,00</h4>
+                                        <p class="mb-0 small">Valor confirmado</p>
+                                        <small class="text-muted">Valores com status "Pago"</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-card bg-warning bg-opacity-10 p-3 rounded h-100">
+                                        <h4 class="text-warning mb-0" id="jogoValorPendente">R$ 0,00</h4>
+                                        <p class="mb-0 small">Pagamentos pendentes</p>
+                                        <small class="text-muted">Valores a receber</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info-card bg-info bg-opacity-10 p-3 rounded h-100">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h4 class="text-info mb-0" id="jogoPercentualPago">0%</h4>
+                                                <p class="mb-0 small">Pagamentos realizados</p>
+                                            </div>
+                                            <div class="rounded-circle p-2 bg-info bg-opacity-20 text-info">
+                                                <i class="fas fa-percentage"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controles de ação em massa -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex flex-wrap gap-2">
+                                <div class="btn-group me-3">
+                                    <button class="btn btn-sm btn-outline-primary" id="btnSelecionarTodos">
+                                        <i class="fas fa-check-square me-1"></i>Selecionar Todos
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-primary" id="btnSelecionarPendentes">
+                                        <i class="fas fa-clock me-1"></i>Selecionar Pendentes
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary" id="btnLimparSelecao">
+                                        <i class="fas fa-square me-1"></i>Limpar Seleção
+                                </button>
+                            </div>
+                                
+                                <div class="btn-group me-3">
+                                    <button class="btn btn-sm btn-success" id="btnMarcarPago" disabled>
+                                        <i class="fas fa-check me-1"></i>Marcar como Pago
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" id="btnMarcarPendente" disabled>
+                                        <i class="fas fa-clock me-1"></i>Marcar como Pendente
+                                    </button>
+                        </div>
+                                
+                                <button class="btn btn-sm btn-primary" id="btnRegistrarPagamento" disabled>
+                                    <i class="fas fa-money-bill-wave me-1"></i>Registrar Pagamento
+                                </button>
+                                
+                                <button class="btn btn-sm btn-info" id="btnEnviarLembretes" disabled>
+                                    <i class="fas fa-bell me-1"></i>Enviar Lembretes
+                                </button>
+                                
+                                <div class="ms-auto">
+                                    <div class="input-group">
+                                        <select class="form-select form-select-sm me-2" id="filtroStatusPagamento" style="max-width: 150px;">
+                                            <option value="">Todos os status</option>
+                                            <option value="pendente">Pendentes</option>
+                                            <option value="pago">Pagos</option>
+                                            <option value="cancelado">Cancelados</option>
+                                        </select>
+                                        <input type="text" class="form-control form-control-sm" placeholder="Buscar participante..." id="buscarParticipante">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" id="btnBuscar">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="tabelaParticipantes">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="checkTodos">
+                                            </div>
+                                        </th>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Status</th>
+                                        <th>Pagamento</th>
+                                        <th>Valor</th>
+                                        <th>Método</th>
+                                        <th>Data Pagamento</th>
+                                        <th>Check-in</th>
+                                        <th style="width: 120px;">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="participantsList">
+                                    <!-- Será preenchido via JavaScript -->
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-light">
+                                        <td colspan="5" class="text-end fw-bold">Totais:</td>
+                                        <td class="fw-bold" id="totalValorTabela">R$ 0,00</td>
+                                        <td colspan="4"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success me-auto" id="btnExportarParticipantes">
+                        <i class="fas fa-file-excel me-2"></i>Exportar Lista
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnAdicionarParticipante">
+                        <i class="fas fa-user-plus me-2"></i>Adicionar Participante
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal para Editar Participante -->
     <div class="modal fade" id="participantModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Participante</h5>
+                    <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Editar Participante</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <form id="participantForm">
                         <input type="hidden" id="participantId">
                         <input type="hidden" id="participantRoomId">
-                        <div class="mb-3">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-7">
                             <label class="form-label">Nome</label>
                             <input type="text" class="form-control" id="participantName" readonly>
                         </div>
+                            <div class="col-md-5">
+                                <label class="form-label">Valor a Pagar</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">R$</span>
+                                    <input type="number" class="form-control" id="participantValor" step="0.01" min="0">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" id="participantEmail" readonly>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label">Status de Pagamento</label>
+                        
+                        <div class="card bg-light mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0">Informações de Pagamento</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Status</label>
                             <select class="form-select" id="pagamentoStatus">
                                 <option value="pendente">Pendente</option>
                                 <option value="pago">Pago</option>
                                 <option value="cancelado">Cancelado</option>
                             </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Método</label>
+                                        <select class="form-select" id="pagamentoMetodo">
+                                            <option value="">Selecione...</option>
+                                            <option value="pix">PIX</option>
+                                            <option value="dinheiro">Dinheiro</option>
+                                            <option value="cartao">Cartão</option>
+                                            <option value="transferencia">Transferência</option>
+                                            <option value="outro">Outro</option>
+                                        </select>
+                                    </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Método de Pagamento</label>
-                            <input type="text" class="form-control" id="pagamentoMetodo">
+                                    <label class="form-label">Data de Pagamento</label>
+                                    <input type="datetime-local" class="form-control" id="pagamentoData">
                         </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Comprovante (ID/Código)</label>
+                                    <input type="text" class="form-control" id="pagamentoComprovante" placeholder="Código de transação ou identificação">
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="mb-3">
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="participantCheckedIn">
                                 <label class="form-check-label">Check-in Realizado</label>
                             </div>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Observações</label>
-                            <textarea class="form-control" id="participantObservacoes"></textarea>
+                            <textarea class="form-control" id="participantObservacoes" rows="3"></textarea>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="btnRemoverParticipant">Remover</button>
-                    <button type="button" class="btn btn-primary" id="btnSalvarParticipant">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-danger" id="btnRemoverParticipant">
+                        <i class="fas fa-user-minus me-2"></i>Remover
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnSalvarParticipant">
+                        <i class="fas fa-save me-2"></i>Salvar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para Registro de Pagamento em Lote -->
+    <div class="modal fade" id="pagamentoLoteModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-money-bill-wave me-2"></i>Registrar Pagamentos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2 fs-4"></i>
+                            <div>
+                                <p class="mb-0">Registrar pagamento para <strong id="qtdPagamentoLote">0</strong> participantes selecionados.</p>
+                                <p class="mb-0 fw-bold">Valor total: <span id="valorTotalLote">R$ 0,00</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="pagamentoLoteForm">
+                        <div class="mb-3">
+                            <label class="form-label">Status de Pagamento</label>
+                            <select class="form-select" id="lotePagamentoStatus">
+                                <option value="pago">Pago</option>
+                                <option value="pendente">Pendente</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Método de Pagamento</label>
+                            <select class="form-select" id="lotePagamentoMetodo">
+                                <option value="">Selecione...</option>
+                                <option value="pix">PIX</option>
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="cartao">Cartão</option>
+                                <option value="transferencia">Transferência</option>
+                                <option value="outro">Outro</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Data de Pagamento</label>
+                            <input type="datetime-local" class="form-control" id="lotePagamentoData">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Comprovante/ID (opcional)</label>
+                            <input type="text" class="form-control" id="loteComprovante" placeholder="Referência ou identificação do pagamento">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="loteCheckIn">
+                                <label class="form-check-label">Marcar check-in como realizado</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-control" id="loteObservacoes" rows="2"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Cancelar
+                    </button>
+                    <button type="button" class="btn btn-success" id="btnSalvarPagamentoLote">
+                        <i class="fas fa-check me-2"></i>Confirmar Pagamentos
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Relatórios -->
+    <div class="modal fade" id="relatoriosModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-chart-line me-2"></i>Relatórios e Estatísticas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-4" id="relatoriosTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="resumo-tab" data-bs-toggle="tab" data-bs-target="#resumo" type="button" role="tab" aria-controls="resumo" aria-selected="true">Resumo</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="esportes-tab" data-bs-toggle="tab" data-bs-target="#esportes" type="button" role="tab" aria-controls="esportes" aria-selected="false">Esportes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="jogadores-tab" data-bs-toggle="tab" data-bs-target="#jogadores" type="button" role="tab" aria-controls="jogadores" aria-selected="false">Jogadores</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="financeiro-tab" data-bs-toggle="tab" data-bs-target="#financeiro" type="button" role="tab" aria-controls="financeiro" aria-selected="false">Financeiro</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="relatoriosTabsContent">
+                        <!-- Resumo Geral -->
+                        <div class="tab-pane fade show active" id="resumo" role="tabpanel" aria-labelledby="resumo-tab">
+                            <div class="row mb-4">
+                                <div class="col-md-3">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="totalJogos">0</h3>
+                                            <p class="mb-0">Jogos Realizados</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="totalParticipantes">0</h3>
+                                            <p class="mb-0">Participantes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-warning text-dark">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="mediaJogadores">0</h3>
+                                            <p class="mb-0">Média de Jogadores</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="totalEsportes">0</h3>
+                                            <p class="mb-0">Esportes Diferentes</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Próximos Jogos</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-hover" id="tabelaProximosJogos">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Data</th>
+                                                            <th>Jogo</th>
+                                                            <th>Ocupação</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- Será preenchido via JavaScript -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Jogos por Mês</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoJogosPorMes" width="400" height="200"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estatísticas de Esportes -->
+                        <div class="tab-pane fade" id="esportes" role="tabpanel" aria-labelledby="esportes-tab">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Distribuição de Esportes</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoDistribuicaoEsportes" width="400" height="300"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Participantes por Esporte</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoParticipantesPorEsporte" width="400" height="300"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Detalhes por Esporte</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="tabelaDetalhesPorEsporte">
+                                            <thead>
+                                                <tr>
+                                                    <th>Esporte</th>
+                                                    <th>Total de Jogos</th>
+                                                    <th>Total de Participantes</th>
+                                                    <th>Média de Participantes</th>
+                                                    <th>Valor Médio</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Será preenchido via JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estatísticas de Jogadores -->
+                        <div class="tab-pane fade" id="jogadores" role="tabpanel" aria-labelledby="jogadores-tab">
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Jogadores Mais Frequentes</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoJogadoresFrequentes" width="400" height="300"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Taxa de Check-in</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoTaxaCheckin" width="400" height="300"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Ranking de Jogadores</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="tabelaRankingJogadores">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Jogador</th>
+                                                    <th>Jogos Participados</th>
+                                                    <th>Taxa de Check-in</th>
+                                                    <th>Esporte Favorito</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Será preenchido via JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Estatísticas Financeiras -->
+                        <div class="tab-pane fade" id="financeiro" role="tabpanel" aria-labelledby="financeiro-tab">
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card bg-success text-white">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="valorTotalArrecadado">R$ 0</h3>
+                                            <p class="mb-0">Total Arrecadado</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-primary text-white">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="valorTotalPendente">R$ 0</h3>
+                                            <p class="mb-0">Pendente de Pagamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-info text-white">
+                                        <div class="card-body text-center">
+                                            <h3 class="display-4 fw-bold" id="valorMedioPorJogo">R$ 0</h3>
+                                            <p class="mb-0">Valor Médio por Jogo</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Arrecadação Mensal</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoArrecadacaoMensal" width="400" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h5 class="card-title mb-0">Status de Pagamentos</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="graficoStatusPagamentos" width="400" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Últimos Pagamentos</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover" id="tabelaUltimosPagamentos">
+                                            <thead>
+                                                <tr>
+                                                    <th>Data</th>
+                                                    <th>Jogador</th>
+                                                    <th>Jogo</th>
+                                                    <th>Valor</th>
+                                                    <th>Método</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Será preenchido via JavaScript -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="btnExportarRelatorio">
+                        <i class="fas fa-file-excel me-2"></i>Exportar Relatório
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-2"></i>Fechar
+                    </button>
                 </div>
             </div>
         </div>
@@ -845,9 +1894,85 @@
 <!-- FullCalendar JS -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js'></script>
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 
 <script>
+// DEBUG HELPER - Descomente para depurar
+console.log("Iniciando script admin.html");
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM carregado - Inicializando calendário e funções");
+    
+    // Verificação de elementos críticos
+    function verificarElementos() {
+        const elementosImportantes = [
+            'calendar',
+            'btnNovoJogo',
+            'btnGerenciarQuadras',
+            'roomModal',
+            'courtsModal',
+            'btnNovaCourt',
+            'btnSalvar',
+            'btnExcluir',
+            'btnGerenciarParticipantes'
+        ];
+        
+        console.log("=== Verificação de elementos ===");
+        elementosImportantes.forEach(id => {
+            const elemento = document.getElementById(id);
+            console.log(`Elemento #${id}: ${elemento ? 'ENCONTRADO' : 'NÃO ENCONTRADO'}`);
+        });
+        
+        // Verificar se o Bootstrap 5 está disponível
+        console.log("Bootstrap disponível:", typeof bootstrap !== 'undefined');
+        console.log("Bootstrap Modal disponível:", typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined');
+        console.log("jQuery disponível:", typeof jQuery !== 'undefined');
+        console.log("===============================");
+    }
+    
+    // Função para abrir modal com fallback para jQuery se o Bootstrap não estiver disponível
+    function abrirModal(modalId) {
+        console.log("Tentando abrir modal:", modalId);
+        const modalElement = document.getElementById(modalId);
+        
+        if (!modalElement) {
+            console.error("Modal não encontrado:", modalId);
+            return;
+        }
+        
+        try {
+            // Verificar se Bootstrap 5 está disponível
+            if (typeof bootstrap !== 'undefined' && typeof bootstrap.Modal !== 'undefined') {
+                console.log("Usando Bootstrap 5 para abrir modal");
+                const modalInstance = new bootstrap.Modal(modalElement);
+                modalInstance.show();
+            } 
+            // Fallback para jQuery
+            else if (typeof jQuery !== 'undefined') {
+                console.log("Usando jQuery para abrir modal");
+                jQuery(modalElement).modal('show');
+            } 
+            // Fallback para manipulação manual
+            else {
+                console.log("Usando método manual para abrir modal");
+                modalElement.classList.add('show');
+                modalElement.style.display = 'block';
+                document.body.classList.add('modal-open');
+                
+                // Criar backdrop
+                const backdrop = document.createElement('div');
+                backdrop.classList.add('modal-backdrop', 'fade', 'show');
+                document.body.appendChild(backdrop);
+            }
+        } catch (error) {
+            console.error("Erro ao abrir modal:", error);
+        }
+    }
+    
+    // Executar verificação após carregamento
+    verificarElementos();
+    
     var calendarEl = document.getElementById('calendar');
     var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
@@ -859,36 +1984,121 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         slotMinTime: '06:00:00',
         slotMaxTime: '22:00:00',
+        nowIndicator: true,
+        dayMaxEvents: true,
+        eventColor: 'var(--primary-color)',
+        eventBorderColor: 'var(--primary-color)',
+        eventTimeFormat: {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        },
+        buttonText: {
+            today: 'Hoje',
+            month: 'Mês',
+            week: 'Semana',
+            day: 'Dia'
+        },
         events: '/admin/api/rooms',
         editable: true,
         selectable: true,
         selectMirror: true,
-        dayMaxEvents: true,
         select: function(info) {
-            abrirModalNovaQuadra(info.start);
+            abrirModalNovoJogo(info.start);
         },
         eventClick: function(info) {
-            abrirModalEditarQuadra(info.event);
+            abrirModalEditarJogo(info.event);
+        },
+        eventContent: function(arg) {
+            let eventTitle = document.createElement('div');
+            eventTitle.className = 'fc-event-title';
+            
+            // Extrair apenas o nome da sala, sem o esporte
+            let title = arg.event.title.split(' - ')[0];
+            eventTitle.innerHTML = title;
+            
+            let eventTime = document.createElement('div');
+            eventTime.className = 'fc-event-time';
+            eventTime.innerHTML = arg.timeText;
+            
+            let eventSport = document.createElement('div');
+            eventSport.className = 'fc-event-sport';
+            eventSport.style.fontSize = '0.85em';
+            eventSport.style.opacity = '0.9';
+            eventSport.style.marginTop = '2px';
+            eventSport.innerHTML = '<i class="fas fa-running me-1"></i>' + arg.event.extendedProps.sport;
+            
+            let arrayOfDomNodes = [eventTime, eventTitle, eventSport];
+            return { domNodes: arrayOfDomNodes };
+        },
+        eventDidMount: function(info) {
+            // Adicionar tooltip com informações da sala
+            const sportIcon = getSportIcon(info.event.extendedProps.sport);
+            const tooltipContent = `
+                <div style="padding: 10px; max-width: 300px;">
+                    <div style="font-weight: bold; margin-bottom: 5px;">${info.event.title}</div>
+                    <div><i class="${sportIcon} me-2"></i>${info.event.extendedProps.sport}</div>
+                    <div><i class="fas fa-map-marker-alt me-2"></i>${info.event.extendedProps.city}</div>
+                    <div><i class="fas fa-users me-2"></i>${info.event.extendedProps.participants_count}/${info.event.extendedProps.max_participants} participantes</div>
+                    <div><i class="fas fa-money-bill-wave me-2"></i>R$ ${info.event.extendedProps.valor}/pessoa</div>
+                </div>
+            `;
+            
+            $(info.el).tooltip({
+                title: tooltipContent,
+                html: true,
+                placement: 'top',
+                container: 'body'
+            });
         }
     });
     calendar.render();
 
+    // Função para obter o ícone do esporte
+    function getSportIcon(sport) {
+        sport = sport.toLowerCase();
+        if (sport === 'futebol') return 'fas fa-futbol';
+        if (sport === 'vôlei' || sport === 'volei') return 'fas fa-volleyball-ball';
+        if (sport === 'basquete') return 'fas fa-basketball-ball';
+        if (sport === 'tênis' || sport === 'tenis') return 'fas fa-table-tennis';
+        return 'fas fa-running';
+    }
+
     // Funções auxiliares
-    function abrirModalNovaQuadra(start) {
-        document.getElementById('roomId').value = '';
-        document.getElementById('date').value = start.toISOString().slice(0, 16);
+    function abrirModalNovoJogo(start) {
+        console.log("Abrindo modal de novo jogo", start);
+        resetarFormulario();
+        
+        // Ajustar para o próximo horário inteiro se necessário
+        let startTime = new Date(start);
+        startTime.setMinutes(Math.ceil(startTime.getMinutes() / 30) * 30);
+        
+        // Formatar a data para o input datetime-local
+        let formattedDate = startTime.toISOString().slice(0, 16);
+        console.log("Data formatada:", formattedDate);
+        
+        document.getElementById('date').value = formattedDate;
         document.getElementById('btnExcluir').style.display = 'none';
         document.getElementById('btnGerenciarParticipantes').style.display = 'none';
+
+        // Alterar o título do modal
+        document.querySelector('#roomModal .modal-title').innerHTML = '<i class="fas fa-plus-circle me-2"></i>Novo Jogo';
+        
         new bootstrap.Modal(document.getElementById('roomModal')).show();
     }
 
-    function abrirModalEditarQuadra(event) {
+    function abrirModalEditarJogo(event) {
+        resetarFormulario();
+        
         document.getElementById('roomId').value = event.id;
         document.getElementById('name').value = event.title.split(' - ')[0];
         document.getElementById('sport').value = event.extendedProps.sport;
         document.getElementById('date').value = event.start.toISOString().slice(0, 16);
         document.getElementById('maxParticipants').value = event.extendedProps.max_participants;
         document.getElementById('valor').value = event.extendedProps.valor;
+        document.getElementById('qtdQuadras').value = event.extendedProps.qtd_quadras || 1;
+        document.getElementById('valorQuadra').value = event.extendedProps.valor_quadra || 0;
+        document.getElementById('calcularAutomatico').checked = event.extendedProps.calcular_automatico || false;
         document.getElementById('location').value = event.extendedProps.location || '';
         document.getElementById('city').value = event.extendedProps.city;
         document.getElementById('description').value = event.extendedProps.description || '';
@@ -896,91 +2106,672 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('isActive').checked = event.extendedProps.is_active;
         document.getElementById('btnExcluir').style.display = 'inline-block';
         document.getElementById('btnGerenciarParticipantes').style.display = 'inline-block';
+
+        // Ajustar o estado dos campos dependendo da opção de cálculo automático
+        atualizarEstadoCampoValor();
+
+        // Alterar o título do modal
+        document.querySelector('#roomModal .modal-title').innerHTML = '<i class="fas fa-edit me-2"></i>Editar Jogo';
+        
         new bootstrap.Modal(document.getElementById('roomModal')).show();
+    }
+
+    function resetarFormulario() {
+        document.getElementById('roomId').value = '';
+        document.getElementById('name').value = '';
+        document.getElementById('sport').value = 'Futebol';
+        document.getElementById('maxParticipants').value = '10';
+        document.getElementById('valor').value = '0';
+        document.getElementById('qtdQuadras').value = '1';
+        document.getElementById('valorQuadra').value = '0';
+        document.getElementById('calcularAutomatico').checked = false;
+        document.getElementById('location').value = '';
+        document.getElementById('city').value = '';
+        document.getElementById('description').value = '';
+        document.getElementById('isPrivate').checked = false;
+        document.getElementById('isActive').checked = true;
+        
+        // Resetar estado do campo de valor
+        document.getElementById('valor').disabled = false;
+    }
+    
+    // Evento para habilitar/desabilitar o campo de valor por participante
+    document.getElementById('calcularAutomatico').addEventListener('change', atualizarEstadoCampoValor);
+    
+    // Evento para calcular valor por pessoa quando o valor da quadra ou quantidade mudar
+    document.getElementById('valorQuadra').addEventListener('input', calcularValorPorPessoa);
+    document.getElementById('maxParticipants').addEventListener('input', calcularValorPorPessoa);
+    
+    function atualizarEstadoCampoValor() {
+        const calcularAutomatico = document.getElementById('calcularAutomatico').checked;
+        const valorInput = document.getElementById('valor');
+        
+        // Desabilitar campo de valor individual se o cálculo for automático
+        valorInput.disabled = calcularAutomatico;
+        
+        if (calcularAutomatico) {
+            calcularValorPorPessoa();
+        }
+    }
+    
+    function calcularValorPorPessoa() {
+        const calcularAutomatico = document.getElementById('calcularAutomatico').checked;
+        if (!calcularAutomatico) return;
+        
+        const valorQuadra = parseFloat(document.getElementById('valorQuadra').value) || 0;
+        const maxParticipants = parseInt(document.getElementById('maxParticipants').value) || 1;
+        
+        // Se estamos editando um jogo existente, usar a quantidade real de participantes confirmados
+        let participantesConfirmados = maxParticipants;
+        
+        const roomId = document.getElementById('roomId').value;
+        if (roomId) {
+            // Se temos um jogo existente, buscar a sala para saber quantos participantes confirmados tem
+            fetch(`/admin/api/rooms/${roomId}/participants`)
+                .then(response => response.json())
+                .then(data => {
+                    const participantesAtivos = data.filter(p => p.is_active && !p.is_in_waiting_list).length;
+                    
+                    // Usar o número de participantes ativos, mas no mínimo 1 para evitar divisão por zero
+                    participantesConfirmados = Math.max(1, participantesAtivos);
+                    
+                    // Calcular e atualizar o valor por pessoa
+                    const valorPorPessoa = valorQuadra / participantesConfirmados;
+                    document.getElementById('valor').value = valorPorPessoa.toFixed(2);
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar participantes:', error);
+                    // Em caso de erro, continuar com o cálculo baseado no max de participantes
+                    const valorPorPessoa = valorQuadra / maxParticipants;
+                    document.getElementById('valor').value = valorPorPessoa.toFixed(2);
+                });
+        } else {
+            // Para um novo jogo, usar o max de participantes no cálculo
+            const valorPorPessoa = valorQuadra / maxParticipants;
+            document.getElementById('valor').value = valorPorPessoa.toFixed(2);
+        }
     }
 
     function carregarParticipantes(roomId) {
         fetch(`/admin/api/rooms/${roomId}/participants`)
             .then(response => response.json())
-            .then(participants => {
-                const tbody = document.getElementById('participantsList');
-                tbody.innerHTML = '';
+            .then(data => {
+                const participantsList = document.getElementById('participantsList');
+                participantsList.innerHTML = '';
                 
-                participants.forEach(p => {
+                // Carregar detalhes da sala
+                fetch(`/admin/api/rooms`)
+                    .then(response => response.json())
+                    .then(rooms => {
+                        const sala = rooms.find(r => r.id == roomId);
+                        // Guardar referência da sala atual - Movido para aqui para garantir que esteja disponível antes de usar
+                        roomData = sala;
+                        
+                        if (sala) {
+                            document.getElementById('jogoTitulo').textContent = sala.title;
+                            document.getElementById('jogoData').textContent = `Data: ${formatarData(sala.start)}`;
+                            document.getElementById('jogoLocal').textContent = `Local: ${sala.location || 'Não informado'}, ${sala.city}`;
+                            document.getElementById('jogoOcupacao').textContent = `${sala.current_participants}/${sala.max_participants}`;
+                            
+                            // Valor por pessoa pode ser fixo ou calculado
+                            let valorPorPessoa = parseFloat(sala.valor);
+                            if (sala.calcular_automatico && sala.valor_quadra > 0) {
+                                // Calcular apenas com participantes confirmados
+                                const participantesConfirmados = data.filter(p => p.is_active && !p.is_in_waiting_list).length;
+                                if (participantesConfirmados > 0) {
+                                    valorPorPessoa = sala.valor_quadra / participantesConfirmados;
+                                }
+                            }
+                            
+                            document.getElementById('jogoValor').textContent = `R$ ${valorPorPessoa.toFixed(2)}`;
+                            
+                            // Calcular valores do resumo financeiro
+                            const valorTotal = sala.calcular_automatico ? sala.valor_quadra : (sala.max_participants * sala.valor);
+                            let valorConfirmado = 0;
+                            let valorPendente = 0;
+                            let qtdPagos = 0;
+                            let qtdPendentes = 0;
+                            let qtdCancelados = 0;
+                            
+                            // Calcular status de pagamentos
+                            data.forEach(p => {
+                                if (p.is_active) {
+                                    if (p.pagamento_status === 'pago') {
+                                        qtdPagos++;
+                                        valorConfirmado += valorPorPessoa;
+                                    } else if (p.pagamento_status === 'pendente') {
+                                        qtdPendentes++;
+                                        valorPendente += valorPorPessoa;
+                                    } else if (p.pagamento_status === 'cancelado') {
+                                        qtdCancelados++;
+                                    }
+                                }
+                            });
+                            
+                            // Atualizar contadores de pagamento
+                            document.getElementById('jogoPagos').textContent = qtdPagos;
+                            document.getElementById('jogoPendentes').textContent = qtdPendentes;
+                            document.getElementById('jogoCancelados').textContent = qtdCancelados;
+                            
+                            // Calcular porcentagem de pagos
+                            const totalAtivos = qtdPagos + qtdPendentes;
+                            const porcentagemPagos = totalAtivos > 0 ? Math.round((qtdPagos / totalAtivos) * 100) : 0;
+                            document.getElementById('jogoPagosBar').style.width = `${porcentagemPagos}%`;
+                            document.getElementById('jogoPagosBar').textContent = `${porcentagemPagos}%`;
+                            
+                            // Atualizar resumo financeiro
+                            document.getElementById('jogoTotalArrecadado').textContent = `R$ ${valorConfirmado.toFixed(2)}`;
+                            document.getElementById('jogoValorTotal').textContent = `R$ ${valorTotal.toFixed(2)}`;
+                            document.getElementById('jogoValorConfirmado').textContent = `R$ ${valorConfirmado.toFixed(2)}`;
+                            document.getElementById('jogoValorPendente').textContent = `R$ ${valorPendente.toFixed(2)}`;
+                            document.getElementById('jogoPercentualPago').textContent = `${porcentagemPagos}%`;
+                            document.getElementById('totalValorTabela').textContent = `R$ ${(valorConfirmado + valorPendente).toFixed(2)}`;
+                        
+                            // Se não houver participantes, exibir mensagem
+                            if (data.length === 0) {
                     const tr = document.createElement('tr');
+                                tr.innerHTML = '<td colspan="10" class="text-center">Nenhum participante encontrado.</td>';
+                                participantsList.appendChild(tr);
+                                return;
+                            }
+                            
+                            // Ordenar participantes: ativos primeiro, depois por status de pagamento
+                            data.sort((a, b) => {
+                                if (a.is_active !== b.is_active) return b.is_active - a.is_active;
+                                if (a.is_active) {
+                                    if (a.pagamento_status !== b.pagamento_status) {
+                                        if (a.pagamento_status === 'pago') return -1;
+                                        if (b.pagamento_status === 'pago') return 1;
+                                        if (a.pagamento_status === 'pendente') return -1;
+                                        if (b.pagamento_status === 'pendente') return 1;
+                                    }
+                                }
+                                return 0;
+                            });
+                            
+                            // Preencher a tabela com os participantes
+                            data.forEach(participant => {
+                                const tr = document.createElement('tr');
+                                tr.className = participant.is_active ? (participant.is_in_waiting_list ? 'table-warning' : '') : 'table-secondary text-muted';
+                                
+                                // Status de pagamento
+                                let statusBadge = '';
+                                if (participant.is_active) {
+                                    switch (participant.pagamento_status) {
+                                        case 'pago':
+                                            statusBadge = '<span class="badge bg-success">Pago</span>';
+                                            break;
+                                        case 'pendente':
+                                            statusBadge = '<span class="badge bg-warning text-dark">Pendente</span>';
+                                            break;
+                                        case 'cancelado':
+                                            statusBadge = '<span class="badge bg-danger">Cancelado</span>';
+                                            break;
+                                        default:
+                                            statusBadge = '<span class="badge bg-secondary">Indefinido</span>';
+                                    }
+                                } else {
+                                    statusBadge = '<span class="badge bg-secondary">Inativo</span>';
+                                }
+                                
+                                // Formatação da data de pagamento
+                                const dataPagamento = participant.pagamento_data ? formatarData(participant.pagamento_data) : '-';
+                                
+                                // Formatação do método de pagamento
+                                let metodoPagamento = participant.pagamento_metodo || '-';
+                                if (participant.pagamento_metodo) {
+                                    // Capitalizar primeira letra
+                                    metodoPagamento = participant.pagamento_metodo.charAt(0).toUpperCase() + participant.pagamento_metodo.slice(1);
+                                }
+                                
+                                // Check-in status
+                                const checkinStatus = participant.checked_in ? 
+                                    '<span class="badge bg-success"><i class="fas fa-check"></i> Sim</span>' : 
+                                    '<span class="badge bg-light text-dark border"><i class="fas fa-times"></i> Não</span>';
+                                
+                                // Botões desabilitados apenas para participantes inativos
+                                const btnDisabled = !participant.is_active ? 'disabled' : '';
+                                const checkboxDisabled = !participant.is_active ? 'disabled' : '';
+                                
                     tr.innerHTML = `
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-circle me-2">
-                                    <span>${p.user_name.charAt(0).toUpperCase()}</span>
-                                </div>
-                                ${p.user_name}
+                                        <div class="form-check">
+                                            <input class="form-check-input participante-check" type="checkbox" 
+                                                data-id="${participant.id}" ${checkboxDisabled}>
                             </div>
                         </td>
-                        <td>${p.user_email}</td>
-                        <td>
-                            <div class="participant-status">
-                                <span class="status-indicator ${p.is_in_waiting_list ? 'warning' : 'success'}"></span>
-                                <span class="badge ${p.is_in_waiting_list ? 'bg-warning' : 'bg-success'}">
-                                    ${p.is_in_waiting_list ? 'Lista de Espera' : 'Confirmado'}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="participant-status">
-                                <span class="status-indicator ${p.pagamento_status === 'pago' ? 'success' : p.pagamento_status === 'cancelado' ? 'danger' : 'warning'}"></span>
-                                <span class="badge ${p.pagamento_status === 'pago' ? 'bg-success' : p.pagamento_status === 'cancelado' ? 'bg-danger' : 'bg-warning'}">
-                                    ${p.pagamento_status}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="participant-status">
-                                <span class="status-indicator ${p.checked_in ? 'success' : 'secondary'}"></span>
-                                <span class="badge ${p.checked_in ? 'bg-success' : 'bg-secondary'}">
-                                    ${p.checked_in ? 'Sim' : 'Não'}
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-action btn-primary" onclick="editarParticipante(${p.id}, ${roomId})" title="Editar">
+                                    <td>${participant.user_name}</td>
+                                    <td>${participant.user_email}</td>
+                                    <td>${participant.is_in_waiting_list ? '<span class="badge bg-warning text-dark">Lista de espera</span>' : 
+                                        (participant.is_active ? '<span class="badge bg-success">Confirmado</span>' : 
+                                        '<span class="badge bg-secondary">Inativo</span>')}</td>
+                                    <td>${statusBadge}</td>
+                                    <td>R$ ${valorPorPessoa.toFixed(2)}</td>
+                                    <td>${metodoPagamento}</td>
+                                    <td>${dataPagamento}</td>
+                                    <td>${checkinStatus}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editarParticipante(${participant.id}, ${roomId})" 
+                                            ${btnDisabled}>
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-action btn-info" onclick="verDetalhes(${p.id})" title="Ver Detalhes">
-                                    <i class="fas fa-eye"></i>
+                                        <button class="btn btn-sm btn-danger" onclick="removerParticipante(${participant.id}, ${roomId})"
+                                            ${btnDisabled}>
+                                            <i class="fas fa-trash"></i>
                                 </button>
-                            </div>
                         </td>
                     `;
-                    tbody.appendChild(tr);
-                });
+                                
+                                participantsList.appendChild(tr);
+                            });
+                            
+                            atualizarControlesSelecao();
+                        }
+                    })
+                    .catch(error => console.error('Erro ao carregar dados da sala:', error));
+            })
+            .catch(error => console.error('Erro ao carregar participantes:', error));
+    }
+    
+    // Função para formatar data
+    function formatarData(dataStr) {
+        const data = new Date(dataStr);
+        return data.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+    
+    // Habilitar/desabilitar botões conforme seleção
+    function atualizarControlesSelecao() {
+        const checkboxes = document.querySelectorAll('.participante-check:checked');
+        const btnMarcarPago = document.getElementById('btnMarcarPago');
+        const btnMarcarPendente = document.getElementById('btnMarcarPendente');
+        const btnRegistrarPagamento = document.getElementById('btnRegistrarPagamento');
+        const btnEnviarLembretes = document.getElementById('btnEnviarLembretes');
+        
+        const qtdSelecionados = checkboxes.length;
+        const algumSelecionado = qtdSelecionados > 0;
+        
+        btnMarcarPago.disabled = !algumSelecionado;
+        btnMarcarPendente.disabled = !algumSelecionado;
+        btnRegistrarPagamento.disabled = !algumSelecionado;
+        btnEnviarLembretes.disabled = !algumSelecionado;
+        
+        // Adicionar debug - exibir no console quantidade de jogadores selecionados
+        console.log(`Participantes selecionados: ${qtdSelecionados}`);
+    }
+    
+    // Selecionar/deselecionar todos
+    document.getElementById('checkTodos').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:not([disabled])');
+        checkboxes.forEach(cb => {
+            cb.checked = this.checked;
+        });
+        
+        atualizarControlesSelecao();
+    });
+    
+    // Atualizar controles ao selecionar individualmente
+    document.addEventListener('change', function(e) {
+        if (e.target.classList.contains('participante-check')) {
+            atualizarControlesSelecao();
+        }
+    });
+    
+    // Botão para selecionar todos os participantes
+    document.getElementById('btnSelecionarTodos').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:not([disabled])');
+        checkboxes.forEach(cb => {
+            cb.checked = true;
+        });
+        
+        document.getElementById('checkTodos').checked = true;
+        atualizarControlesSelecao();
+    });
+    
+    // Botão para selecionar apenas participantes com pagamento pendente
+    document.getElementById('btnSelecionarPendentes').addEventListener('click', function() {
+        // Primeiro, limpar todas as seleções
+        const allCheckboxes = document.querySelectorAll('.participante-check');
+        allCheckboxes.forEach(cb => {
+            cb.checked = false;
+        });
+        
+        // Buscar todas as linhas da tabela
+        const rows = document.querySelectorAll('#tabelaParticipantes tbody tr');
+        rows.forEach(row => {
+            // Verificar se contém o texto "Pendente" no status (5ª coluna)
+            const statusCell = row.cells[4];
+            if (statusCell && statusCell.textContent.includes('Pendente')) {
+                // Marcar o checkbox
+                const checkbox = row.querySelector('.participante-check');
+                if (checkbox && !checkbox.disabled) {
+                    checkbox.checked = true;
+                }
+            }
+        });
+        
+        document.getElementById('checkTodos').checked = false;
+        atualizarControlesSelecao();
+    });
+    
+    // Botão para limpar seleção
+    document.getElementById('btnLimparSelecao').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check');
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+        });
+        
+        document.getElementById('checkTodos').checked = false;
+        atualizarControlesSelecao();
+    });
+    
+    // Botão para marcar selecionados como pagos
+    document.getElementById('btnMarcarPago').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:checked');
+        if (checkboxes.length === 0) return;
+        
+        if (confirm(`Deseja marcar ${checkboxes.length} participante(s) como PAGO?`)) {
+            const participantIds = Array.from(checkboxes).map(cb => cb.dataset.id);
+            const roomId = roomData.id;
+            
+            // Abrir modal de pagamento em lote
+            document.getElementById('qtdPagamentoLote').textContent = participantIds.length;
+            document.getElementById('valorTotalLote').textContent = `R$ ${(participantIds.length * roomData.valor).toFixed(2)}`;
+            document.getElementById('lotePagamentoStatus').value = 'pago';
+            document.getElementById('lotePagamentoData').value = new Date().toISOString().slice(0, 16);
+            
+            const pagamentoLoteModal = new bootstrap.Modal(document.getElementById('pagamentoLoteModal'));
+            pagamentoLoteModal.show();
+        }
+    });
+    
+    // Botão para marcar selecionados como pendentes
+    document.getElementById('btnMarcarPendente').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:checked');
+        if (checkboxes.length === 0) return;
+        
+        if (confirm(`Deseja marcar ${checkboxes.length} participante(s) como PENDENTE?`)) {
+            const participantIds = Array.from(checkboxes).map(cb => cb.dataset.id);
+            const roomId = roomData.id;
+            
+            const pagamentoData = {
+                participant_ids: participantIds,
+                pagamento_status: 'pendente'
+            };
+            
+            fetch(`/admin/api/rooms/${roomId}/participants/batch_update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(pagamentoData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Status atualizado com sucesso! ${data.updated_count} participantes atualizados.`);
+                carregarParticipantes(roomId);
             })
             .catch(error => console.error('Erro:', error));
     }
-
+    });
+    
+    // Botão para registrar pagamento em lote
+    document.getElementById('btnRegistrarPagamento').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:checked');
+        if (checkboxes.length === 0) return;
+        
+        document.getElementById('qtdPagamentoLote').textContent = checkboxes.length;
+        document.getElementById('valorTotalLote').textContent = `R$ ${(checkboxes.length * roomData.valor).toFixed(2)}`;
+        document.getElementById('lotePagamentoData').value = new Date().toISOString().slice(0, 16);
+        
+        const pagamentoLoteModal = new bootstrap.Modal(document.getElementById('pagamentoLoteModal'));
+        pagamentoLoteModal.show();
+    });
+    
+    // Botão para salvar pagamento em lote
+    document.getElementById('btnSalvarPagamentoLote').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:checked');
+        if (checkboxes.length === 0) return;
+        
+        const participantIds = Array.from(checkboxes).map(cb => cb.dataset.id);
+        const roomId = roomData.id;
+        
+        const pagamentoData = {
+            participant_ids: participantIds,
+            pagamento_status: document.getElementById('lotePagamentoStatus').value,
+            pagamento_metodo: document.getElementById('lotePagamentoMetodo').value,
+            pagamento_data: document.getElementById('lotePagamentoData').value,
+            checked_in: document.getElementById('loteCheckIn').checked,
+            observacoes: document.getElementById('loteObservacoes').value
+        };
+        
+        // Usar o novo endpoint de atualização em lote
+        fetch(`/admin/api/rooms/${roomId}/participants/batch_update`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pagamentoData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(`Pagamentos registrados com sucesso! ${data.updated_count} participantes atualizados.`);
+            bootstrap.Modal.getInstance(document.getElementById('pagamentoLoteModal')).hide();
+            carregarParticipantes(roomId);
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+    
+    // Filtro por status de pagamento
+    document.getElementById('filtroStatusPagamento').addEventListener('change', function() {
+        const status = this.value;
+        const busca = document.getElementById('buscarParticipante').value.toLowerCase();
+        
+        filtrarParticipantes(status, busca);
+    });
+    
+    // Filtrar por texto de busca
+    document.getElementById('btnBuscar').addEventListener('click', function() {
+        const status = document.getElementById('filtroStatusPagamento').value;
+        const busca = document.getElementById('buscarParticipante').value.toLowerCase();
+        
+        filtrarParticipantes(status, busca);
+    });
+    
+    // Busca ao pressionar Enter
+    document.getElementById('buscarParticipante').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            const status = document.getElementById('filtroStatusPagamento').value;
+            const busca = this.value.toLowerCase();
+            
+            filtrarParticipantes(status, busca);
+        }
+    });
+    
+    // Função para filtrar participantes na tabela
+    function filtrarParticipantes(status, busca) {
+        const rows = document.querySelectorAll('#tabelaParticipantes tbody tr');
+        
+        rows.forEach(row => {
+            let exibir = true;
+            
+            // Verificar status
+            if (status) {
+                const statusCell = row.cells[4]; // Célula do status de pagamento
+                if (statusCell && !statusCell.textContent.toLowerCase().includes(status)) {
+                    exibir = false;
+                }
+            }
+            
+            // Verificar busca por texto
+            if (busca && exibir) {
+                const nome = row.cells[1].textContent.toLowerCase();
+                const email = row.cells[2].textContent.toLowerCase();
+                
+                if (!nome.includes(busca) && !email.includes(busca)) {
+                    exibir = false;
+                }
+            }
+            
+            row.style.display = exibir ? '' : 'none';
+        });
+    }
+    
+    // Botão para exportar lista de participantes
+    document.getElementById('btnExportarParticipantes').addEventListener('click', function() {
+        if (!roomData) return;
+        
+        // Exportar para CSV
+        const rows = document.querySelectorAll('#tabelaParticipantes tbody tr');
+        let csv = 'Nome,Email,Status,Pagamento,Valor,Método,Data Pagamento,Check-in\n';
+        
+        rows.forEach(row => {
+            // Ignorar linhas ocultas pelo filtro
+            if (row.style.display === 'none') return;
+            
+            const nome = row.cells[1].textContent;
+            const email = row.cells[2].textContent;
+            const status = row.cells[3].textContent.replace(/\s+/g, ' ').trim();
+            const pagamento = row.cells[4].textContent.replace(/\s+/g, ' ').trim();
+            const valor = row.cells[5].textContent;
+            const metodo = row.cells[6].textContent;
+            const data = row.cells[7].textContent;
+            const checkin = row.cells[8].textContent.replace(/\s+/g, ' ').trim();
+            
+            csv += `"${nome}","${email}","${status}","${pagamento}","${valor}","${metodo}","${data}","${checkin}"\n`;
+        });
+        
+        // Criar link para download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `participantes_${roomData.name}_${new Date().toISOString().slice(0,10)}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    
+    // Botão para exportar resumo financeiro
+    document.getElementById('btnExportarFinanceiro').addEventListener('click', function() {
+        if (!roomData) return;
+        
+        // Obter dados do resumo financeiro
+        const titulo = document.getElementById('jogoTitulo').textContent;
+        const data = document.getElementById('jogoData').textContent;
+        const local = document.getElementById('jogoLocal').textContent;
+        const ocupacao = document.getElementById('jogoOcupacao').textContent;
+        const valorPessoa = document.getElementById('jogoValor').textContent;
+        const totalArrecadado = document.getElementById('jogoTotalArrecadado').textContent;
+        const pagos = document.getElementById('jogoPagos').textContent;
+        const pendentes = document.getElementById('jogoPendentes').textContent;
+        const cancelados = document.getElementById('jogoCancelados').textContent;
+        const valorTotal = document.getElementById('jogoValorTotal').textContent;
+        const valorConfirmado = document.getElementById('jogoValorConfirmado').textContent;
+        const valorPendente = document.getElementById('jogoValorPendente').textContent;
+        const percentualPago = document.getElementById('jogoPercentualPago').textContent;
+        
+        // Criar CSV com resumo financeiro
+        let csv = "Resumo Financeiro\n\n";
+        csv += `Jogo,${titulo}\n`;
+        csv += `${data}\n`;
+        csv += `${local}\n\n`;
+        csv += "Resumo Geral\n";
+        csv += `Ocupação,${ocupacao}\n`;
+        csv += `Valor por pessoa,${valorPessoa}\n`;
+        csv += `Total arrecadado,${totalArrecadado}\n\n`;
+        csv += "Status de Pagamentos\n";
+        csv += `Pagos,${pagos}\n`;
+        csv += `Pendentes,${pendentes}\n`;
+        csv += `Cancelados,${cancelados}\n\n`;
+        csv += "Valores\n";
+        csv += `Valor total previsto,${valorTotal}\n`;
+        csv += `Valor confirmado,${valorConfirmado}\n`;
+        csv += `Valor pendente,${valorPendente}\n`;
+        csv += `Percentual pago,${percentualPago}\n\n`;
+        csv += `Relatório gerado em,${new Date().toLocaleString('pt-BR')}\n`;
+        
+        // Criar link para download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `financeiro_${roomData.name}_${new Date().toISOString().slice(0,10)}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    
+    // Enviar lembretes
+    document.getElementById('btnEnviarLembretes').addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.participante-check:checked');
+        if (checkboxes.length === 0) return;
+        
+        if (confirm(`Deseja enviar lembretes de pagamento para ${checkboxes.length} participante(s)?`)) {
+            alert('Funcionalidade em desenvolvimento');
+        }
+    });
+    
+    // Variável para armazenar dados da sala atual
+    let roomData = null;
+    
+    // Função para editar participante
     function editarParticipante(participantId, roomId) {
         fetch(`/admin/api/rooms/${roomId}/participants`)
             .then(response => response.json())
-            .then(participants => {
-                const participant = participants.find(p => p.id === participantId);
+            .then(data => {
+                const participant = data.find(p => p.id == participantId);
                 if (participant) {
                     document.getElementById('participantId').value = participant.id;
                     document.getElementById('participantRoomId').value = roomId;
                     document.getElementById('participantName').value = participant.user_name;
                     document.getElementById('participantEmail').value = participant.user_email;
+                    document.getElementById('participantValor').value = roomData.valor;
                     document.getElementById('pagamentoStatus').value = participant.pagamento_status;
                     document.getElementById('pagamentoMetodo').value = participant.pagamento_metodo || '';
+                    document.getElementById('pagamentoData').value = participant.pagamento_data ? new Date(participant.pagamento_data).toISOString().slice(0, 16) : '';
                     document.getElementById('participantCheckedIn').checked = participant.checked_in;
                     document.getElementById('participantObservacoes').value = participant.observacoes || '';
                     
-                    new bootstrap.Modal(document.getElementById('participantModal')).show();
+                    const participantModal = new bootstrap.Modal(document.getElementById('participantModal'));
+                    participantModal.show();
                 }
             })
             .catch(error => console.error('Erro:', error));
     }
+    
+    // Função para remover participante
+    function removerParticipante(participantId, roomId) {
+        if (confirm('Tem certeza que deseja remover este participante?')) {
+            fetch(`/admin/api/rooms/${roomId}/participants/${participantId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Participante removido com sucesso!');
+                carregarParticipantes(roomId);
+            })
+            .catch(error => console.error('Erro:', error));
+        }
+    }
 
     // Event Listeners
+    document.getElementById('btnNovoJogo').addEventListener('click', function() {
+        console.log("Botão Novo Jogo clicado");
+        abrirModalNovoJogo(new Date());
+    });
+
     document.getElementById('btnSalvar').addEventListener('click', function() {
         const formData = {
             id: document.getElementById('roomId').value,
@@ -989,6 +2780,9 @@ document.addEventListener('DOMContentLoaded', function() {
             date: document.getElementById('date').value,
             max_participants: document.getElementById('maxParticipants').value,
             valor: document.getElementById('valor').value,
+            qtd_quadras: document.getElementById('qtdQuadras').value,
+            valor_quadra: document.getElementById('valorQuadra').value,
+            calcular_automatico: document.getElementById('calcularAutomatico').checked,
             location: document.getElementById('location').value,
             city: document.getElementById('city').value,
             description: document.getElementById('description').value,
@@ -1013,7 +2807,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('btnExcluir').addEventListener('click', function() {
         const id = document.getElementById('roomId').value;
-        if (confirm('Tem certeza que deseja excluir esta quadra?')) {
+        if (confirm('Tem certeza que deseja excluir este jogo?')) {
             fetch(`/admin/api/rooms/${id}`, {
                 method: 'DELETE'
             })
@@ -1028,6 +2822,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('btnGerenciarParticipantes').addEventListener('click', function() {
         const roomId = document.getElementById('roomId').value;
+        console.log('Gerenciando participantes da sala ID:', roomId);
+        
+        // Resetar a lista antes de carregar
+        document.getElementById('participantsList').innerHTML = '<tr><td colspan="10" class="text-center"><i class="fas fa-spinner fa-spin me-2"></i>Carregando participantes...</td></tr>';
+        
         carregarParticipantes(roomId);
         bootstrap.Modal.getInstance(document.getElementById('roomModal')).hide();
         new bootstrap.Modal(document.getElementById('participantsModal')).show();
@@ -1094,6 +2893,877 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Expor função para o onclick do botão de editar participante
     window.editarParticipante = editarParticipante;
+    
+    // Função para ver detalhes (placeholder - implementar conforme necessário)
+    window.verDetalhes = function(id) {
+        alert('Funcionalidade em desenvolvimento');
+    };
+
+    // ==========================================
+    // FUNÇÕES PARA RELATÓRIOS E ESTATÍSTICAS
+    // ==========================================
+    
+    // Inicializar os relatórios quando o modal for aberto
+    document.getElementById('btnRelatorios').addEventListener('click', function() {
+        carregarResumoGeral();
+        carregarEstatisticasEsportes();
+        carregarEstatisticasJogadores();
+        carregarEstatisticasFinanceiras();
+    });
+    
+    function carregarResumoGeral() {
+        // API para obter os dados do resumo
+        fetch('/admin/api/estatisticas/resumo')
+            .then(response => response.json())
+            .then(data => {
+                // Atualizar contadores
+                document.getElementById('totalJogos').textContent = data.total_jogos || 0;
+                document.getElementById('totalParticipantes').textContent = data.total_participantes || 0;
+                document.getElementById('mediaJogadores').textContent = data.media_jogadores || 0;
+                document.getElementById('totalEsportes').textContent = data.total_esportes || 0;
+                
+                // Preencher tabela de próximos jogos
+                const tabelaProximosJogos = document.getElementById('tabelaProximosJogos').getElementsByTagName('tbody')[0];
+                tabelaProximosJogos.innerHTML = '';
+                
+                // Se não houver próximos jogos, exibir mensagem
+                if (!data.proximos_jogos || data.proximos_jogos.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="3" class="text-center">Nenhum jogo agendado.</td>';
+                    tabelaProximosJogos.appendChild(tr);
+                } else {
+                    // Preencher com os próximos jogos
+                    data.proximos_jogos.forEach(jogo => {
+                        const tr = document.createElement('tr');
+                        
+                        // Formatar data e hora
+                        const dataJogo = new Date(jogo.date);
+                        const dataFormatada = dataJogo.toLocaleDateString('pt-BR');
+                        const horaFormatada = dataJogo.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                        
+                        // Calcular ocupação
+                        const ocupacao = (jogo.participantes_ativos / jogo.max_participants) * 100;
+                        const classeOcupacao = ocupacao < 50 ? 'text-warning' : ocupacao < 100 ? 'text-primary' : 'text-success';
+                        
+                        tr.innerHTML = `
+                            <td>${dataFormatada} ${horaFormatada}</td>
+                            <td>${jogo.name} - ${jogo.sport}</td>
+                            <td><span class="${classeOcupacao}">${jogo.participantes_ativos}/${jogo.max_participants}</span></td>
+                        `;
+                        tabelaProximosJogos.appendChild(tr);
+                    });
+                }
+                
+                // Criar gráfico de jogos por mês
+                criarGraficoJogosPorMes(data.jogos_por_mes || []);
+            })
+            .catch(error => console.error('Erro ao carregar resumo:', error));
+    }
+    
+    function criarGraficoJogosPorMes(dados) {
+        const ctx = document.getElementById('graficoJogosPorMes').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoJogosPorMes) {
+            window.graficoJogosPorMes.destroy();
+        }
+        
+        // Preparar dados para o gráfico
+        const labels = dados.map(item => item.mes);
+        const values = dados.map(item => item.quantidade);
+        
+        // Criar novo gráfico
+        window.graficoJogosPorMes = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jogos por Mês',
+                    data: values,
+                    backgroundColor: 'rgba(255, 106, 61, 0.7)',
+                    borderColor: 'rgba(255, 106, 61, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function carregarEstatisticasEsportes() {
+        // API para obter os dados de esportes
+        fetch('/admin/api/estatisticas/esportes')
+            .then(response => response.json())
+            .then(data => {
+                // Gráfico de distribuição de esportes
+                criarGraficoDistribuicaoEsportes(data.distribuicao || []);
+                
+                // Gráfico de participantes por esporte
+                criarGraficoParticipantesPorEsporte(data.participantes_por_esporte || []);
+                
+                // Tabela de detalhes por esporte
+                const tabelaDetalhes = document.getElementById('tabelaDetalhesPorEsporte').getElementsByTagName('tbody')[0];
+                tabelaDetalhes.innerHTML = '';
+                
+                if (!data.detalhes || data.detalhes.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="5" class="text-center">Nenhum dado disponível.</td>';
+                    tabelaDetalhes.appendChild(tr);
+                } else {
+                    data.detalhes.forEach(esporte => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${esporte.nome}</td>
+                            <td>${esporte.total_jogos}</td>
+                            <td>${esporte.total_participantes}</td>
+                            <td>${esporte.media_participantes.toFixed(1)}</td>
+                            <td>R$ ${esporte.valor_medio.toFixed(2)}</td>
+                        `;
+                        tabelaDetalhes.appendChild(tr);
+                    });
+                }
+            })
+            .catch(error => console.error('Erro ao carregar estatísticas de esportes:', error));
+    }
+    
+    function criarGraficoDistribuicaoEsportes(dados) {
+        const ctx = document.getElementById('graficoDistribuicaoEsportes').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoDistribuicaoEsportes) {
+            window.graficoDistribuicaoEsportes.destroy();
+        }
+        
+        // Cores para diferentes esportes
+        const cores = [
+            'rgba(255, 106, 61, 0.7)',   // Laranja
+            'rgba(26, 34, 56, 0.7)',     // Azul escuro
+            'rgba(56, 176, 0, 0.7)',     // Verde
+            'rgba(247, 23, 53, 0.7)',    // Vermelho
+            'rgba(255, 189, 0, 0.7)'     // Amarelo
+        ];
+        
+        // Preparar dados para o gráfico
+        const labels = dados.map(item => item.esporte);
+        const values = dados.map(item => item.quantidade);
+        const backgroundColors = labels.map((_, i) => cores[i % cores.length]);
+        
+        // Criar novo gráfico
+        window.graficoDistribuicaoEsportes = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderColor: 'white',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right'
+                    }
+                }
+            }
+        });
+    }
+    
+    function criarGraficoParticipantesPorEsporte(dados) {
+        const ctx = document.getElementById('graficoParticipantesPorEsporte').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoParticipantesPorEsporte) {
+            window.graficoParticipantesPorEsporte.destroy();
+        }
+        
+        // Preparar dados para o gráfico
+        const labels = dados.map(item => item.esporte);
+        const values = dados.map(item => item.participantes);
+        
+        // Criar novo gráfico
+        window.graficoParticipantesPorEsporte = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Número de Participantes',
+                    data: values,
+                    backgroundColor: 'rgba(56, 176, 0, 0.7)',
+                    borderColor: 'rgba(56, 176, 0, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function carregarEstatisticasJogadores() {
+        // API para obter os dados de jogadores
+        fetch('/admin/api/estatisticas/jogadores')
+            .then(response => response.json())
+            .then(data => {
+                // Gráfico de jogadores mais frequentes
+                criarGraficoJogadoresFrequentes(data.mais_frequentes || []);
+                
+                // Gráfico de taxa de check-in
+                criarGraficoTaxaCheckin(data.taxa_checkin || {});
+                
+                // Tabela de ranking de jogadores
+                const tabelaRanking = document.getElementById('tabelaRankingJogadores').getElementsByTagName('tbody')[0];
+                tabelaRanking.innerHTML = '';
+                
+                if (!data.ranking || data.ranking.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="5" class="text-center">Nenhum dado disponível.</td>';
+                    tabelaRanking.appendChild(tr);
+                } else {
+                    data.ranking.forEach((jogador, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${index + 1}</td>
+                            <td>${jogador.nome}</td>
+                            <td>${jogador.jogos_participados}</td>
+                            <td>${(jogador.taxa_checkin * 100).toFixed(0)}%</td>
+                            <td>${jogador.esporte_favorito}</td>
+                        `;
+                        tabelaRanking.appendChild(tr);
+                    });
+                }
+            })
+            .catch(error => console.error('Erro ao carregar estatísticas de jogadores:', error));
+    }
+    
+    function criarGraficoJogadoresFrequentes(dados) {
+        const ctx = document.getElementById('graficoJogadoresFrequentes').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoJogadoresFrequentes) {
+            window.graficoJogadoresFrequentes.destroy();
+        }
+        
+        // Limitar a 10 jogadores
+        const dadosLimitados = dados.slice(0, 10);
+        
+        // Preparar dados para o gráfico
+        const labels = dadosLimitados.map(item => item.nome);
+        const values = dadosLimitados.map(item => item.jogos_participados);
+        
+        // Criar novo gráfico
+        window.graficoJogadoresFrequentes = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Jogos Participados',
+                    data: values,
+                    backgroundColor: 'rgba(26, 34, 56, 0.7)',
+                    borderColor: 'rgba(26, 34, 56, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function criarGraficoTaxaCheckin(dados) {
+        const ctx = document.getElementById('graficoTaxaCheckin').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoTaxaCheckin) {
+            window.graficoTaxaCheckin.destroy();
+        }
+        
+        // Preparar dados para o gráfico
+        const labels = ['Realizaram Check-in', 'Não Realizaram Check-in'];
+        const values = [dados.com_checkin || 0, dados.sem_checkin || 0];
+        const backgroundColors = [
+            'rgba(56, 176, 0, 0.7)',  // Verde para check-in
+            'rgba(247, 23, 53, 0.7)'  // Vermelho para ausentes
+        ];
+        
+        // Criar novo gráfico
+        window.graficoTaxaCheckin = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderColor: 'white',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+    
+    function carregarEstatisticasFinanceiras() {
+        // API para obter os dados financeiros
+        fetch('/admin/api/estatisticas/financeiro')
+            .then(response => response.json())
+            .then(data => {
+                // Atualizar contadores
+                document.getElementById('valorTotalArrecadado').textContent = `R$ ${(data.total_arrecadado || 0).toFixed(2)}`;
+                document.getElementById('valorTotalPendente').textContent = `R$ ${(data.total_pendente || 0).toFixed(2)}`;
+                document.getElementById('valorMedioPorJogo').textContent = `R$ ${(data.valor_medio_jogo || 0).toFixed(2)}`;
+                
+                // Gráfico de arrecadação mensal
+                criarGraficoArrecadacaoMensal(data.arrecadacao_mensal || []);
+                
+                // Gráfico de status de pagamentos
+                criarGraficoStatusPagamentos(data.status_pagamentos || {});
+                
+                // Tabela de últimos pagamentos
+                const tabelaPagamentos = document.getElementById('tabelaUltimosPagamentos').getElementsByTagName('tbody')[0];
+                tabelaPagamentos.innerHTML = '';
+                
+                if (!data.ultimos_pagamentos || data.ultimos_pagamentos.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="6" class="text-center">Nenhum pagamento registrado.</td>';
+                    tabelaPagamentos.appendChild(tr);
+                } else {
+                    data.ultimos_pagamentos.forEach(pagamento => {
+                        const tr = document.createElement('tr');
+                        
+                        // Formatar data
+                        const dataPagamento = new Date(pagamento.data);
+                        const dataFormatada = dataPagamento.toLocaleDateString('pt-BR');
+                        
+                        // Definir classe de status
+                        let classeStatus, textoStatus;
+                        switch (pagamento.status) {
+                            case 'pago':
+                                classeStatus = 'bg-success';
+                                textoStatus = 'Pago';
+                                break;
+                            case 'pendente':
+                                classeStatus = 'bg-warning';
+                                textoStatus = 'Pendente';
+                                break;
+                            case 'cancelado':
+                                classeStatus = 'bg-danger';
+                                textoStatus = 'Cancelado';
+                                break;
+                            default:
+                                classeStatus = 'bg-secondary';
+                                textoStatus = pagamento.status;
+                        }
+                        
+                        tr.innerHTML = `
+                            <td>${dataFormatada}</td>
+                            <td>${pagamento.jogador}</td>
+                            <td>${pagamento.jogo}</td>
+                            <td>R$ ${pagamento.valor.toFixed(2)}</td>
+                            <td>${pagamento.metodo || '-'}</td>
+                            <td><span class="badge ${classeStatus}">${textoStatus}</span></td>
+                        `;
+                        tabelaPagamentos.appendChild(tr);
+                    });
+                }
+            })
+            .catch(error => console.error('Erro ao carregar estatísticas financeiras:', error));
+    }
+    
+    function criarGraficoArrecadacaoMensal(dados) {
+        const ctx = document.getElementById('graficoArrecadacaoMensal').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoArrecadacaoMensal) {
+            window.graficoArrecadacaoMensal.destroy();
+        }
+        
+        // Preparar dados para o gráfico
+        const labels = dados.map(item => item.mes);
+        const values = dados.map(item => item.valor);
+        
+        // Criar novo gráfico
+        window.graficoArrecadacaoMensal = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Arrecadação (R$)',
+                    data: values,
+                    backgroundColor: 'rgba(56, 176, 0, 0.2)',
+                    borderColor: 'rgba(56, 176, 0, 1)',
+                    borderWidth: 2,
+                    tension: 0.2,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + value;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    function criarGraficoStatusPagamentos(dados) {
+        const ctx = document.getElementById('graficoStatusPagamentos').getContext('2d');
+        
+        // Verificar se já existe um gráfico e destruí-lo
+        if (window.graficoStatusPagamentos) {
+            window.graficoStatusPagamentos.destroy();
+        }
+        
+        // Preparar dados para o gráfico
+        const labels = ['Pago', 'Pendente', 'Cancelado'];
+        const values = [dados.pago || 0, dados.pendente || 0, dados.cancelado || 0];
+        const backgroundColors = [
+            'rgba(56, 176, 0, 0.7)',   // Verde para pago
+            'rgba(255, 189, 0, 0.7)',  // Amarelo para pendente
+            'rgba(247, 23, 53, 0.7)'   // Vermelho para cancelado
+        ];
+        
+        // Criar novo gráfico
+        window.graficoStatusPagamentos = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: backgroundColors,
+                    borderColor: 'white',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    }
+    
+    // Botão para exportar relatório
+    document.getElementById('btnExportarRelatorio').addEventListener('click', function() {
+        // Simular exportação (em produção substituir por API real)
+        alert('Funcionalidade de exportação em desenvolvimento');
+        // Em produção:
+        // window.location.href = '/admin/api/estatisticas/exportar';
+    });
+    
+    // =============================================
+    // FUNÇÕES PARA GERENCIAMENTO DE QUADRAS
+    // =============================================
+    
+    // Botão para abrir modal de gerenciamento de quadras
+    document.getElementById('btnGerenciarQuadras').addEventListener('click', function() {
+        console.log("Botão Gerenciar Quadras clicado");
+        carregarQuadras();
+        const courtsModal = new bootstrap.Modal(document.getElementById('courtsModal'));
+        courtsModal.show();
+    });
+    
+    // Botão para criar nova quadra
+    document.getElementById('btnNovaCourt').addEventListener('click', function() {
+        console.log("Botão Nova Quadra clicado");
+        resetarFormularioQuadra();
+        document.querySelector('#courtModal .modal-title').innerHTML = '<i class="fas fa-plus-circle me-2"></i>Nova Quadra';
+        document.getElementById('btnExcluirQuadra').style.display = 'none';
+        const courtModal = new bootstrap.Modal(document.getElementById('courtModal'));
+        courtModal.show();
+    });
+    
+    // Botão para salvar quadra
+    document.getElementById('btnSalvarQuadra').addEventListener('click', function() {
+        console.log("Botão Salvar Quadra clicado");
+        
+        const courtId = document.getElementById('courtIdField').value;
+        const formData = {
+            name: document.getElementById('courtName').value,
+            sport_type: document.getElementById('courtSportType').value,
+            hourly_price: document.getElementById('courtPrice').value,
+            capacity: document.getElementById('courtCapacity').value,
+            location: document.getElementById('courtLocation').value,
+            description: document.getElementById('courtDescription').value,
+            is_active: document.getElementById('courtIsActive').checked
+        };
+        
+        console.log("Dados do formulário:", formData);
+        
+        const url = courtId ? `/admin/api/courts/${courtId}` : '/admin/api/courts';
+        const method = courtId ? 'PUT' : 'POST';
+        
+        console.log(`Enviando requisição ${method} para ${url}`);
+        
+        fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            console.log("Status da resposta:", response.status);
+            if (!response.ok) {
+                console.error("Erro na resposta:", response.statusText);
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Resposta do servidor:", data);
+            if (data.error) {
+                alert(`Erro: ${data.message}`);
+                return;
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('courtModal')).hide();
+            carregarQuadras();
+            
+            // Recarregar lista de quadras no formulário de criação de jogos
+            carregarListaQuadras();
+        })
+        .catch(error => {
+            console.error('Erro ao salvar quadra:', error);
+            alert('Ocorreu um erro ao salvar a quadra. Verifique o console para mais detalhes.');
+        });
+    });
+    
+    // Botão para excluir quadra
+    document.getElementById('btnExcluirQuadra').addEventListener('click', function() {
+        const courtId = document.getElementById('courtIdField').value;
+        
+        if (!courtId) {
+            alert('Nenhuma quadra selecionada para exclusão.');
+            return;
+        }
+        
+        if (!confirm('Tem certeza que deseja excluir esta quadra? Esta ação não pode ser desfeita.')) {
+            return;
+        }
+        
+        fetch(`/admin/api/courts/${courtId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(`Erro: ${data.message}`);
+                return;
+            }
+            
+            bootstrap.Modal.getInstance(document.getElementById('courtModal')).hide();
+            carregarQuadras();
+            
+            // Recarregar lista de quadras no formulário de criação de jogos
+            carregarListaQuadras();
+        })
+        .catch(error => console.error('Erro:', error));
+    });
+    
+    // Função para carregar lista de quadras
+    function carregarQuadras() {
+        console.log("Carregando lista de quadras...");
+        fetch('/admin/api/courts')
+            .then(response => {
+                console.log("Status da resposta ao carregar quadras:", response.status);
+                if (!response.ok) {
+                    console.error("Erro ao carregar quadras:", response.statusText);
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Quadras carregadas:", data);
+                const courtsList = document.getElementById('courtsList');
+                courtsList.innerHTML = '';
+                
+                if (data.length === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td colspan="7" class="text-center">Nenhuma quadra cadastrada.</td>';
+                    courtsList.appendChild(tr);
+                    return;
+                }
+                
+                data.forEach(court => {
+                    const tr = document.createElement('tr');
+                    
+                    // Status da quadra
+                    const statusBadge = court.is_active ? 
+                        '<span class="badge bg-success">Ativa</span>' : 
+                        '<span class="badge bg-secondary">Inativa</span>';
+                    
+                    tr.innerHTML = `
+                        <td>${court.name}</td>
+                        <td>${court.sport_type}</td>
+                        <td>${court.location || '-'}</td>
+                        <td>R$ ${court.hourly_price.toFixed(2)}/h</td>
+                        <td>${court.capacity} pessoas</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="editarQuadra(${court.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="excluirQuadra(${court.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    `;
+                    
+                    courtsList.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao carregar quadras:', error);
+                const courtsList = document.getElementById('courtsList');
+                courtsList.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Erro ao carregar quadras. Veja o console para detalhes.</td></tr>';
+            });
+    }
+    
+    // Função para carregar lista de quadras no formulário de jogos
+    function carregarListaQuadras() {
+        console.log("Carregando lista de quadras para o formulário...");
+        fetch('/admin/api/courts')
+            .then(response => {
+                console.log("Status da resposta ao carregar lista de quadras:", response.status);
+                if (!response.ok) {
+                    console.error("Erro ao carregar lista de quadras:", response.statusText);
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Lista de quadras carregada:", data);
+                const courtSelect = document.getElementById('courtId');
+                
+                // Limpar opções existentes
+                courtSelect.innerHTML = '<option value="">Sem quadra específica</option>';
+                
+                // Filtrar apenas quadras ativas
+                const quadrasAtivas = data.filter(court => court.is_active);
+                
+                if (quadrasAtivas.length === 0) {
+                    console.log("Nenhuma quadra ativa encontrada");
+                    return;
+                }
+                
+                // Adicionar cada quadra como uma opção
+                quadrasAtivas.forEach(court => {
+                    const option = document.createElement('option');
+                    option.value = court.id;
+                    option.textContent = `${court.name} - ${court.sport_type} (R$ ${court.hourly_price.toFixed(2)}/h)`;
+                    option.dataset.price = court.hourly_price;
+                    option.dataset.capacity = court.capacity;
+                    option.dataset.location = court.location || '';
+                    courtSelect.appendChild(option);
+                });
+                
+                // Adicionar listener de mudança
+                courtSelect.addEventListener('change', atualizarInfoQuadra);
+            })
+            .catch(error => {
+                console.error('Erro ao carregar lista de quadras:', error);
+            });
+    }
+    
+    // Atualizar informações da quadra selecionada
+    function atualizarInfoQuadra() {
+        const courtSelect = document.getElementById('courtId');
+        const courtInfoContainer = document.getElementById('courtInfoContainer');
+        const valorCalculadoInfo = document.getElementById('valorCalculadoInfo');
+        const durationInput = document.getElementById('durationHours');
+        
+        if (!courtSelect.value) {
+            courtInfoContainer.style.display = 'none';
+            valorCalculadoInfo.style.display = 'none';
+            return;
+        }
+        
+        // Obter informações da quadra selecionada
+        const selectedOption = courtSelect.options[courtSelect.selectedIndex];
+        const price = parseFloat(selectedOption.dataset.price);
+        const capacity = parseInt(selectedOption.dataset.capacity);
+        const location = selectedOption.dataset.location;
+        const duration = parseFloat(durationInput.value);
+        
+        // Atualizar informações no card
+        document.getElementById('courtInfoName').textContent = selectedOption.textContent.split(' (')[0];
+        document.getElementById('courtInfoLocation').textContent = location || 'Não informado';
+        document.getElementById('courtInfoCapacity').textContent = capacity;
+        document.getElementById('courtInfoPrice').textContent = `R$ ${price.toFixed(2)}`;
+        
+        // Calcular valor total
+        const totalValue = price * duration;
+        document.getElementById('courtInfoTotal').textContent = totalValue.toFixed(2);
+        
+        // Calcular valor por pessoa
+        const maxParticipants = parseInt(document.getElementById('maxParticipants').value);
+        if (maxParticipants > 0) {
+            const valorPorPessoa = totalValue / maxParticipants;
+            document.getElementById('valorCalculado').textContent = `R$ ${valorPorPessoa.toFixed(2)}`;
+            valorCalculadoInfo.style.display = 'block';
+            
+            // Atualizar valor por pessoa se o cálculo automático estiver habilitado
+            if (document.getElementById('calcularAutomatico') && document.getElementById('calcularAutomatico').checked) {
+                document.getElementById('valor').value = valorPorPessoa.toFixed(2);
+            }
+        }
+        
+        // Exibir o container de informações
+        courtInfoContainer.style.display = 'block';
+    }
+    
+    // Função para resetar formulário de quadra
+    function resetarFormularioQuadra() {
+        document.getElementById('courtIdField').value = '';
+        document.getElementById('courtName').value = '';
+        document.getElementById('courtSportType').value = 'Futebol';
+        document.getElementById('courtPrice').value = '';
+        document.getElementById('courtCapacity').value = '10';
+        document.getElementById('courtLocation').value = '';
+        document.getElementById('courtDescription').value = '';
+        document.getElementById('courtIsActive').checked = true;
+    }
+    
+    // Função para editar quadra
+    function editarQuadra(courtId) {
+        fetch(`/admin/api/courts/${courtId}`)
+            .then(response => response.json())
+            .then(court => {
+                document.getElementById('courtIdField').value = court.id;
+                document.getElementById('courtName').value = court.name;
+                document.getElementById('courtSportType').value = court.sport_type;
+                document.getElementById('courtPrice').value = court.hourly_price;
+                document.getElementById('courtCapacity').value = court.capacity;
+                document.getElementById('courtLocation').value = court.location || '';
+                document.getElementById('courtDescription').value = court.description || '';
+                document.getElementById('courtIsActive').checked = court.is_active;
+                
+                document.querySelector('#courtModal .modal-title').innerHTML = '<i class="fas fa-edit me-2"></i>Editar Quadra';
+                document.getElementById('btnExcluirQuadra').style.display = 'inline-block';
+                
+                const courtModal = new bootstrap.Modal(document.getElementById('courtModal'));
+                courtModal.show();
+            })
+            .catch(error => console.error('Erro ao carregar dados da quadra:', error));
+    }
+    
+    // Função para excluir quadra
+    function excluirQuadra(courtId) {
+        if (!confirm('Tem certeza que deseja excluir esta quadra? Esta ação não pode ser desfeita.')) {
+            return;
+        }
+        
+        fetch(`/admin/api/courts/${courtId}`, {
+            method: 'DELETE'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(`Erro: ${data.message}`);
+                return;
+            }
+            
+            carregarQuadras();
+            
+            // Recarregar lista de quadras no formulário de criação de jogos
+            carregarListaQuadras();
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+    
+    // Carregar lista de quadras ao inicializar
+    carregarListaQuadras();
+    
+    // Event listener para o campo de duração 
+    document.getElementById('durationHours').addEventListener('input', function() {
+        if (document.getElementById('courtId').value) {
+            atualizarInfoQuadra();
+        }
+    });
+    
+    // Event listener para o campo de participantes máximos
+    document.getElementById('maxParticipants').addEventListener('input', function() {
+        if (document.getElementById('courtId').value) {
+            atualizarInfoQuadra();
+        }
+    });
+    
+    // Expor funções para event handlers inline
+    window.editarQuadra = editarQuadra;
+    window.excluirQuadra = excluirQuadra;
+    window.removerParticipante = removerParticipante;
 });
 </script>
 {% endblock %} 

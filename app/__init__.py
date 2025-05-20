@@ -1,7 +1,13 @@
 import os
+import logging
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+
+# Configuração de logging para depuração
+logging.basicConfig()
+logging.getLogger('sqlalchemy').setLevel(logging.INFO)
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 # Inicializa as extensões
 db = SQLAlchemy()
