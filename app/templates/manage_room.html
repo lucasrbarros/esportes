@@ -19,16 +19,45 @@
                         <strong><i class="bi bi-building me-1"></i>Cidade:</strong> 
                         <span>{{ room.city }}</span>
                     </li>
-                    {% if room.location %}
-                        <li class="list-group-item">
-                            <strong><i class="bi bi-geo-alt me-1"></i>Local:</strong> 
-                            <span>{{ room.location }}</span>
-                            {% if room.location|length > 5 %}
-                                <a href="https://maps.google.com/?q={{ room.city }}, {{ room.location }}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
-                                    <i class="bi bi-map"></i> Ver no mapa
-                                </a>
-                            {% endif %}
-                        </li>
+                    <div class="mb-3">
+                        <h5 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Localização</h5>
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                {% if room.location %}
+                                    <p class="mb-1"><strong>Local:</strong> {{ room.location }}</p>
+                                {% endif %}
+                                <p class="mb-2"><strong>Cidade:</strong> {{ room.city }}</p>
+                                {% if room.location %}
+                                    <a href="https://maps.google.com/?q={{ room.city }}, {{ room.location }}" 
+                                       target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-map me-1"></i> Ver no mapa
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if room.court %}
+                    <div class="mb-3">
+                        <h5 class="mb-3"><i class="bi bi-building me-2"></i>Quadra</h5>
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ room.court.name }}</h6>
+                                <p class="mb-1"><strong>Esporte:</strong> {{ room.court.sport_type }}</p>
+                                <p class="mb-1"><strong>Capacidade:</strong> {{ room.court.capacity }} pessoas</p>
+                                <p class="mb-1"><strong>Preço/hora:</strong> R$ {{ room.court.hourly_price }}</p>
+                                {% if room.court.location %}
+                                <p class="mb-1"><strong>Endereço:</strong> {{ room.court.location }}</p>
+                                {% endif %}
+                                <div class="mt-3">
+                                    <span class="badge bg-primary">Valor total: R$ {{ room.court.hourly_price * (room.duration_hours|default(1)) }}</span>
+                                    {% if room.calcular_automatico %}
+                                    <span class="badge bg-success">Valor por pessoa: R$ {{ (room.court.hourly_price * (room.duration_hours|default(1)) / room.get_active_participants()|length)|round(2) if room.get_active_participants()|length > 0 else 0 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {% endif %}
                     {% if room.description %}
                         <li class="list-group-item"><strong>Descrição:</strong> {{ room.description }}</li>

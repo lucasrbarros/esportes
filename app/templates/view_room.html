@@ -30,6 +30,17 @@
                             {% endif %}
                         </li>
                     {% endif %}
+                    {% if room.court %}
+                        <li class="list-group-item">
+                            <strong><i class="bi bi-table-tennis me-1"></i>Quadra:</strong>
+                            <span>{{ room.court.name }}</span>
+                            <div class="mt-2">
+                                <span class="badge bg-info"><i class="bi bi-trophy me-1"></i>{{ room.court.sport_type }}</span>
+                                <span class="badge bg-secondary"><i class="bi bi-people me-1"></i>Capacidade: {{ room.court.capacity }}</span>
+                                <span class="badge bg-primary"><i class="bi bi-cash-coin me-1"></i>R$ {{ room.court.hourly_price }}/hora</span>
+                            </div>
+                        </li>
+                    {% endif %}
                     <li class="list-group-item">
                         <strong>Visibilidade:</strong> 
                         {% if room.is_private %}

@@ -37,7 +37,13 @@
                                     <label for="{{ form.sport.id }}" class="form-label">
                                         <i class="bi bi-trophy me-2"></i>{{ form.sport.label.text }}
                                     </label>
-                                    {{ form.sport(class="form-control form-control-lg", placeholder="Ex: Futebol, Vôlei, Basquete") }}
+                                    <select class="form-control form-control-lg" id="{{ form.sport.id }}" name="sport">
+                                        <option value="Futebol" {% if room.sport == 'Futebol' %}selected{% endif %}>Futebol</option>
+                                        <option value="Vôlei" {% if room.sport == 'Vôlei' %}selected{% endif %}>Vôlei</option>
+                                        <option value="Basquete" {% if room.sport == 'Basquete' %}selected{% endif %}>Basquete</option>
+                                        <option value="Tênis" {% if room.sport == 'Tênis' %}selected{% endif %}>Tênis</option>
+                                        <option value="Outros" {% if room.sport == 'Outros' %}selected{% endif %}>Outros</option>
+                                    </select>
                                     <div class="form-text">Tipo de esporte que será praticado</div>
                                     {% if form.sport.errors %}
                                         <div class="text-danger">
@@ -93,43 +99,34 @@
                         </div>
                         
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <div class="form-group">
-                                    <label for="{{ form.city.id }}" class="form-label">
-                                        <i class="bi bi-building me-2"></i>{{ form.city.label.text }}
+                                    <label for="court_id" class="form-label">
+                                        <i class="bi bi-geo-alt me-2"></i>Quadra
                                     </label>
-                                    <div class="position-relative">
-                                        {{ form.city(class="form-control form-control-lg", placeholder="Ex: São Paulo - SP", id="city-input", autocomplete="off") }}
-                                        <div id="city-suggestions" class="city-autocomplete"></div>
-                                    </div>
-                                    <div class="form-text">Cidade onde o evento será realizado</div>
-                                    {% if form.city.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.city.errors %}
-                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
+                                    <select class="form-control form-control-lg" id="court_id" name="court_id">
+                                        <option value="">Sem quadra específica</option>
+                                        <!-- As opções de quadras serão carregadas via JavaScript -->
+                                    </select>
+                                    <div class="form-text">Selecione uma quadra para usar suas informações de localização</div>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <div class="form-group">
-                                    <label for="{{ form.location.id }}" class="form-label">
-                                        <i class="bi bi-geo-alt me-2"></i>{{ form.location.label.text }}
-                                    </label>
-                                    <div class="input-group">
-                                        {{ form.location(class="form-control form-control-lg", placeholder="Ex: Quadra Poliesportiva, Rua das Flores, 123") }}
-                                        <span class="input-group-text"><i class="bi bi-pin-map"></i></span>
-                                    </div>
-                                    <div class="form-text">Endereço específico do local</div>
-                                    {% if form.location.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.location.errors %}
-                                                <small><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</small>
-                                            {% endfor %}
+                        </div>
+                        
+                        <div id="courtInfoContainer" style="display: none;">
+                            <div class="card mb-3 bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title" id="courtInfoName">-</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p class="mb-1 small"><i class="bi bi-geo-alt me-1"></i> <span id="courtInfoLocation">-</span></p>
+                                            <p class="mb-1 small"><i class="bi bi-people me-1"></i> <span id="courtInfoCapacity">-</span> pessoas</p>
                                         </div>
-                                    {% endif %}
+                                        <div class="col-md-6">
+                                            <p class="mb-1 small"><i class="bi bi-cash-coin me-1"></i> <span id="courtInfoPrice">-</span>/hora</p>
+                                            <p class="mb-2 fw-bold small">Total: R$ <span id="courtInfoTotal">0.00</span></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -210,88 +207,118 @@
             dateInput.min = today;
         }
         
-        // Autocompletar para cidades
-        const cityInput = document.getElementById('city-input');
-        const suggestionsContainer = document.getElementById('city-suggestions');
+        // Carrregar quadras disponíveis
+        loadCourts();
         
-        if (cityInput) {
-            let typingTimer;
-            const doneTypingInterval = 300; // tempo em ms
-            
-            cityInput.addEventListener('input', function() {
-                clearTimeout(typingTimer);
-                if (cityInput.value.length >= 2) {
-                    typingTimer = setTimeout(fetchCitySuggestions, doneTypingInterval);
-                } else {
-                    suggestionsContainer.style.display = 'none';
+        // Event listeners para a quadra e duração
+        const courtSelect = document.getElementById('court_id');
+        
+        if (courtSelect && dateInput) {
+            courtSelect.addEventListener('change', updateCourtInfo);
+            dateInput.addEventListener('change', function() {
+                if (courtSelect.value) {
+                    updateCourtInfo();
                 }
             });
-            
-            // Fechar sugestões ao clicar fora
-            document.addEventListener('click', function(e) {
-                if (e.target !== cityInput && e.target !== suggestionsContainer && !suggestionsContainer.contains(e.target)) {
-                    suggestionsContainer.style.display = 'none';
-                }
-            });
-            
-            // Fechar sugestões ao pressionar Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    suggestionsContainer.style.display = 'none';
-                }
-            });
-            
-            // Posicionar as sugestões corretamente
-            function positionSuggestions() {
-                if (suggestionsContainer.style.display === 'block') {
-                    const inputRect = cityInput.getBoundingClientRect();
-                    const parentRect = cityInput.closest('.position-relative').getBoundingClientRect();
+        }
+        
+        // Carregar quadras disponíveis via API
+        function loadCourts() {
+            fetch('/admin/api/courts')
+                .then(response => response.json())
+                .then(courts => {
+                    const courtSelect = document.getElementById('court_id');
                     
-                    // Garantir que a largura seja a mesma do input
-                    suggestionsContainer.style.width = inputRect.width + 'px';
+                    // Obter ID da quadra atual, se houver
+                    const currentCourtId = {% if room.court_id %}{{ room.court_id }}{% else %}null{% endif %};
                     
-                    // Ajustar o top para posicionar abaixo do input
-                    const topOffset = inputRect.bottom - parentRect.top;
-                    suggestionsContainer.style.top = topOffset + 'px';
+                    // Filtrar apenas quadras ativas
+                    const activeCourts = courts.filter(court => court.is_active || court.id === currentCourtId);
                     
-                    // Definir altura máxima baseada no espaço disponível na tela
-                    const windowHeight = window.innerHeight;
-                    const bottomSpace = windowHeight - inputRect.bottom;
-                    const maxHeight = Math.min(300, bottomSpace - 20); // 20px de margem
-                    suggestionsContainer.style.maxHeight = maxHeight + 'px';
-                }
-            }
-            
-            // Observar redimensionamento da janela
-            window.addEventListener('resize', positionSuggestions);
-            
-            function fetchCitySuggestions() {
-                const query = cityInput.value;
-                
-                fetch(`/api/cidades?q=${encodeURIComponent(query)}`)
-                    .then(response => response.json())
-                    .then(cities => {
-                        suggestionsContainer.innerHTML = '';
+                    if (activeCourts.length === 0) {
+                        return;
+                    }
+                    
+                    // Adicionar cada quadra como uma opção
+                    activeCourts.forEach(court => {
+                        const option = document.createElement('option');
+                        option.value = court.id;
+                        option.textContent = `${court.name} - ${court.sport_type} (R$ ${court.hourly_price.toFixed(2)}/h)`;
+                        option.dataset.price = court.hourly_price;
+                        option.dataset.capacity = court.capacity;
+                        option.dataset.location = court.location || '';
+                        option.dataset.city = court.city || '';
                         
-                        if (cities.length > 0) {
-                            cities.forEach(city => {
-                                const div = document.createElement('div');
-                                div.className = 'city-suggestion';
-                                div.textContent = city;
-                                div.addEventListener('click', function() {
-                                    cityInput.value = city;
-                                    suggestionsContainer.style.display = 'none';
-                                });
-                                suggestionsContainer.appendChild(div);
-                            });
-                            suggestionsContainer.style.display = 'block';
-                            positionSuggestions();
-                        } else {
-                            suggestionsContainer.style.display = 'none';
+                        // Selecionar a quadra atual se estiver editando
+                        if (court.id === currentCourtId) {
+                            option.selected = true;
                         }
-                    })
-                    .catch(error => console.error('Erro ao buscar cidades:', error));
+                        
+                        courtSelect.appendChild(option);
+                    });
+                    
+                    // Se houver uma quadra selecionada, atualizar as informações
+                    if (currentCourtId) {
+                        updateCourtInfo();
+                    }
+                })
+                .catch(error => console.error('Erro ao carregar quadras:', error));
+        }
+        
+        // Atualizar informações da quadra quando selecionada
+        function updateCourtInfo() {
+            const courtSelect = document.getElementById('court_id');
+            const courtInfoContainer = document.getElementById('courtInfoContainer');
+            const maxParticipantsInput = document.getElementById('{{ form.max_participants.id }}');
+            
+            if (!courtSelect.value) {
+                courtInfoContainer.style.display = 'none';
+                return;
             }
+            
+            // Obter informações da quadra selecionada
+            const selectedOption = courtSelect.options[courtSelect.selectedIndex];
+            const price = parseFloat(selectedOption.dataset.price);
+            const capacity = parseInt(selectedOption.dataset.capacity);
+            const location = selectedOption.dataset.location;
+            const city = selectedOption.dataset.city;
+            
+            // Calcular duração com base na data selecionada (padrão: 1 hora)
+            let duration = 1.0;
+            
+            // Atualizar informações no card
+            document.getElementById('courtInfoName').textContent = selectedOption.textContent.split(' (')[0];
+            document.getElementById('courtInfoLocation').textContent = location ? (city + ', ' + location) : city;
+            document.getElementById('courtInfoCapacity').textContent = capacity;
+            document.getElementById('courtInfoPrice').textContent = `R$ ${price.toFixed(2)}`;
+            
+            // Calcular valor total
+            const totalValue = price * duration;
+            document.getElementById('courtInfoTotal').textContent = totalValue.toFixed(2);
+            
+            // Adicionar campos ocultos para cidade e localização
+            let cityInput = document.querySelector('input[name="city"]');
+            let locationInput = document.querySelector('input[name="location"]');
+            
+            if (!cityInput) {
+                cityInput = document.createElement('input');
+                cityInput.type = 'hidden';
+                cityInput.name = 'city';
+                document.querySelector('form').appendChild(cityInput);
+            }
+            
+            if (!locationInput) {
+                locationInput = document.createElement('input');
+                locationInput.type = 'hidden';
+                locationInput.name = 'location';
+                document.querySelector('form').appendChild(locationInput);
+            }
+            
+            cityInput.value = city;
+            locationInput.value = location;
+            
+            // Exibir o container de informações
+            courtInfoContainer.style.display = 'block';
         }
     });
 </script>

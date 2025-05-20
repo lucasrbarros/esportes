@@ -1031,16 +1031,6 @@
                                 <input type="number" class="form-control" id="durationHours" step="0.5" min="0.5" value="1">
                             </div>
                             
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Quantidade de Quadras</label>
-                                <input type="number" class="form-control" id="qtdQuadras" min="1" value="1">
-                            </div>
-                            
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Valor da Quadra (R$)</label>
-                                <input type="number" class="form-control" id="valorQuadra" step="0.01" min="0" value="0">
-                            </div>
-                            
                             <div class="col-md-6 mb-3" id="courtInfoContainer" style="display: none;">
                                 <div class="card bg-light">
                                     <div class="card-body p-3">
@@ -1070,14 +1060,6 @@
                                 <h6 class="mb-3"><i class="fas fa-info-circle me-2"></i>Informações Adicionais</h6>
                             </div>
                             
-                            <div class="col-md-6 mb-3">
-                            <label class="form-label">Cidade</label>
-                            <input type="text" class="form-control" id="city" required>
-                        </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Localização</label>
-                                <input type="text" class="form-control" id="location">
-                            </div>
                             <div class="col-md-12 mb-3">
                             <label class="form-label">Descrição</label>
                                 <textarea class="form-control" id="description" rows="3"></textarea>
@@ -2096,16 +2078,20 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('date').value = event.start.toISOString().slice(0, 16);
         document.getElementById('maxParticipants').value = event.extendedProps.max_participants;
         document.getElementById('valor').value = event.extendedProps.valor;
-        document.getElementById('qtdQuadras').value = event.extendedProps.qtd_quadras || 1;
-        document.getElementById('valorQuadra').value = event.extendedProps.valor_quadra || 0;
         document.getElementById('calcularAutomatico').checked = event.extendedProps.calcular_automatico || false;
-        document.getElementById('location').value = event.extendedProps.location || '';
-        document.getElementById('city').value = event.extendedProps.city;
         document.getElementById('description').value = event.extendedProps.description || '';
         document.getElementById('isPrivate').checked = event.extendedProps.is_private;
         document.getElementById('isActive').checked = event.extendedProps.is_active;
         document.getElementById('btnExcluir').style.display = 'inline-block';
         document.getElementById('btnGerenciarParticipantes').style.display = 'inline-block';
+        document.getElementById('durationHours').value = event.extendedProps.duration_hours || 1;
+        
+        // Selecionar a quadra, se houver
+        if (event.extendedProps.court_id) {
+            document.getElementById('courtId').value = event.extendedProps.court_id;
+            // Atualizar informações da quadra
+            atualizarInfoQuadra();
+        }
 
         // Ajustar o estado dos campos dependendo da opção de cálculo automático
         atualizarEstadoCampoValor();
@@ -2122,25 +2108,47 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('sport').value = 'Futebol';
         document.getElementById('maxParticipants').value = '10';
         document.getElementById('valor').value = '0';
-        document.getElementById('qtdQuadras').value = '1';
-        document.getElementById('valorQuadra').value = '0';
         document.getElementById('calcularAutomatico').checked = false;
-        document.getElementById('location').value = '';
-        document.getElementById('city').value = '';
         document.getElementById('description').value = '';
         document.getElementById('isPrivate').checked = false;
         document.getElementById('isActive').checked = true;
+        document.getElementById('durationHours').value = '1';
+        document.getElementById('courtId').value = '';
+        
+        // Ocultar informações da quadra
+        document.getElementById('courtInfoContainer').style.display = 'none';
+        document.getElementById('valorCalculadoInfo').style.display = 'none';
         
         // Resetar estado do campo de valor
         document.getElementById('valor').disabled = false;
     }
     
     // Evento para habilitar/desabilitar o campo de valor por participante
-    document.getElementById('calcularAutomatico').addEventListener('change', atualizarEstadoCampoValor);
+    document.getElementById('calcularAutomatico').addEventListener('change', function() {
+        atualizarEstadoCampoValor();
+        // Recalcular valor se uma quadra estiver selecionada
+        if (document.getElementById('courtId').value) {
+            atualizarInfoQuadra();
+        }
+    });
     
-    // Evento para calcular valor por pessoa quando o valor da quadra ou quantidade mudar
-    document.getElementById('valorQuadra').addEventListener('input', calcularValorPorPessoa);
-    document.getElementById('maxParticipants').addEventListener('input', calcularValorPorPessoa);
+    // Evento para atualizar informações ao selecionar uma quadra
+    document.getElementById('courtId').addEventListener('change', function() {
+        atualizarInfoQuadra();
+    });
+    
+    // Eventos para recalcular valores quando duração ou número de participantes mudar
+    document.getElementById('durationHours').addEventListener('input', function() {
+        if (document.getElementById('courtId').value) {
+            atualizarInfoQuadra();
+        }
+    });
+    
+    document.getElementById('maxParticipants').addEventListener('input', function() {
+        if (document.getElementById('courtId').value) {
+            atualizarInfoQuadra();
+        }
+    });
     
     function atualizarEstadoCampoValor() {
         const calcularAutomatico = document.getElementById('calcularAutomatico').checked;
@@ -2149,8 +2157,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Desabilitar campo de valor individual se o cálculo for automático
         valorInput.disabled = calcularAutomatico;
         
+        // Atualizar informações visuais
         if (calcularAutomatico) {
-            calcularValorPorPessoa();
+            document.getElementById('valorCalculadoInfo').style.display = 'block';
+        } else {
+            document.getElementById('valorCalculadoInfo').style.display = 'none';
         }
     }
     
@@ -2780,14 +2791,12 @@ document.addEventListener('DOMContentLoaded', function() {
             date: document.getElementById('date').value,
             max_participants: document.getElementById('maxParticipants').value,
             valor: document.getElementById('valor').value,
-            qtd_quadras: document.getElementById('qtdQuadras').value,
-            valor_quadra: document.getElementById('valorQuadra').value,
             calcular_automatico: document.getElementById('calcularAutomatico').checked,
-            location: document.getElementById('location').value,
-            city: document.getElementById('city').value,
             description: document.getElementById('description').value,
             is_private: document.getElementById('isPrivate').checked,
-            is_active: document.getElementById('isActive').checked
+            is_active: document.getElementById('isActive').checked,
+            court_id: document.getElementById('courtId').value || null,
+            duration_hours: document.getElementById('durationHours').value
         };
 
         fetch('/admin/api/rooms', {
@@ -3675,7 +3684,7 @@ document.addEventListener('DOMContentLoaded', function() {
             valorCalculadoInfo.style.display = 'block';
             
             // Atualizar valor por pessoa se o cálculo automático estiver habilitado
-            if (document.getElementById('calcularAutomatico') && document.getElementById('calcularAutomatico').checked) {
+            if (document.getElementById('calcularAutomatico').checked) {
                 document.getElementById('valor').value = valorPorPessoa.toFixed(2);
             }
         }

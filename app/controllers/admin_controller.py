@@ -297,6 +297,29 @@ def criar_room():
     duration_hours = float(data.get('duration_hours', 1.0))
     end_time = date + timedelta(hours=duration_hours)
     
+    # Inicializar valores padrão
+    court_id = data.get('court_id')
+    valor_por_pessoa = float(data.get('valor', 0.0))
+    location = ""
+    city = "Não informada"
+    
+    # Se houver quadra selecionada, puxar informações automaticamente
+    if court_id:
+        court = Court.query.get(court_id)
+        if court:
+            # Usar localização e cidade da quadra
+            location = court.location
+            city = court.city
+            
+            # Calcular valor por pessoa automaticamente se solicitado
+            if data.get('calcular_automatico', False):
+                # Calcular valor total da quadra
+                valor_total = court.hourly_price * duration_hours
+                # Dividir pelo número máximo de participantes
+                max_participantes = int(data.get('max_participants', 1))
+                if max_participantes > 0:
+                    valor_por_pessoa = valor_total / max_participantes
+    
     nova_room = Room(
         name=data['name'],
         sport=data['sport'],
@@ -305,10 +328,10 @@ def criar_room():
         creator_id=current_user.id,
         description=data.get('description', ''),
         is_private=data.get('is_private', False),
-        location=data.get('location', ''),
-        city=data.get('city', 'Não informada'),
-        valor=float(data.get('valor', 0.0)),
-        court_id=data.get('court_id'),
+        location=location,
+        city=city,
+        valor=valor_por_pessoa,
+        court_id=court_id,
         duration_hours=duration_hours
     )
     
@@ -348,15 +371,42 @@ def atualizar_room():
     room.max_participants = data['max_participants']
     room.description = data.get('description', '')
     room.is_private = data.get('is_private', False)
-    room.location = data.get('location', '')
-    room.city = data.get('city', 'Não informada')
     room.is_active = data.get('is_active', True)
-    room.valor = float(data.get('valor', 0.0))
-    room.court_id = data.get('court_id')
     room.duration_hours = float(data.get('duration_hours', 1.0))
     
     # Recalcular o horário de término
     room.end_time = room.date + timedelta(hours=room.duration_hours)
+    
+    # Atualizar quadra e valores relacionados
+    court_id = data.get('court_id')
+    room.court_id = court_id
+    
+    # Inicializar valor por pessoa
+    valor_por_pessoa = float(data.get('valor', 0.0))
+    
+    # Se houver quadra selecionada, atualizar informações automaticamente
+    if court_id:
+        court = Court.query.get(court_id)
+        if court:
+            # Usar localização e cidade da quadra
+            room.location = court.location
+            room.city = court.city
+            
+            # Calcular valor por pessoa automaticamente se solicitado
+            if data.get('calcular_automatico', False):
+                # Calcular valor total da quadra
+                valor_total = court.hourly_price * room.duration_hours
+                # Dividir pelo número de participantes ativos ou pelo máximo
+                participantes_ativos = len(room.get_active_participants())
+                divisor = max(1, participantes_ativos) if participantes_ativos > 0 else room.max_participants
+                valor_por_pessoa = valor_total / divisor
+    else:
+        # Se não houver quadra, manter os campos originais
+        room.location = data.get('location', '')
+        room.city = data.get('city', 'Não informada')
+    
+    # Atualizar o valor
+    room.valor = valor_por_pessoa
     
     # Verificar disponibilidade da quadra se houver mudança
     date_changed = old_date != room.date or old_end_time != room.end_time
